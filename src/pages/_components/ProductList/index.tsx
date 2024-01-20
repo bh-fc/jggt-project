@@ -6,8 +6,12 @@ import Spinner from '@/components/common/Spinner'
 import { getProducts } from '@/repository/products/getProducts'
 import { Product as TProduct } from '@/types'
 
-export default function ProductList() {
-  const [products, setProducts] = useState<TProduct[]>([])
+type Props = {
+  initialProducts: TProduct[]
+}
+
+export default function ProductList({ initialProducts }: Props) {
+  const [products, setProducts] = useState<TProduct[]>(initialProducts)
   const { ref, inView } = useInView({ threshold: 1 })
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isLastPage, setIsLastPage] = useState<boolean>(false)
@@ -31,11 +35,6 @@ export default function ProductList() {
       setIsLoading(false)
     }
   }
-
-  useEffect(() => {
-    // 컴포넌트가 마운트 되면 products 값을 2페이지 불러온다.
-    handleGetProducts({ fromPage: 0, toPage: 2 })
-  }, [])
 
   // 항상 products 값은 2페이지까지 불러와져 있다고 가정한다.
   const [page, setPage] = useState<number>(2)
