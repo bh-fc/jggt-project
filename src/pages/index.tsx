@@ -1,9 +1,9 @@
 import { InferGetServerSidePropsType } from 'next'
 
+import Banner from './_components/Banner'
 import ProductList from './_components/ProductList'
 
 import Container from '@/components/layout/Container'
-import JggtLayout from '@/components/layout/JggtLayout'
 import Wrapper from '@/components/layout/Wrapper'
 import { getProducts } from '@/repository/products/getProducts'
 
@@ -17,12 +17,11 @@ export default function Home({
   products,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <JggtLayout>
-      <Wrapper>
-        <Container>
-          <ProductList initialProducts={products} />
-        </Container>
-      </Wrapper>
-    </JggtLayout>
+    <Wrapper>
+      <Container>
+        <Banner />
+        <ProductList initialProducts={products} />
+      </Container>
+    </Wrapper>
   )
 }
