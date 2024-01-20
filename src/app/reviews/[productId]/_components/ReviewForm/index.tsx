@@ -1,4 +1,5 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+'use client'
+
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
 
@@ -7,51 +8,13 @@ import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
 import MarkdownEditorSkeleton from '@/components/shared/MarkdownEditor/Skeleton'
-import { getMe } from '@/repository/me/getMe'
-import { getProduct } from '@/repository/products/getProduct'
 import { createReview } from '@/repository/reviews/createReview'
-import { getReviewByProductId } from '@/repository/reviews/getReviewByProductId'
 import { Product, Review } from '@/types'
-import { AuthError } from '@/utils/error'
 import supabase from '@/utils/supabase/browserSupabase'
-import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
-export const getServerSideProps: GetServerSideProps<{
+type Props = {
   product: Product
   review: Review | null
-}> = async (context) => {
-  const supabase = getServerSupabase(context)
-
-  try {
-    const {
-      data: { shopId },
-    } = await getMe(supabase)
-
-    if (!shopId) {
-      throw new AuthError()
-    }
-
-    const productId = context.query.productId as string
-
-    const [{ data: product }, { data: review }] = await Promise.all([
-      getProduct(supabase, productId),
-      getReviewByProductId(supabase, productId),
-    ])
-
-    return {
-      props: { product, review },
-    }
-  } catch (e) {
-    if (e instanceof AuthError) {
-      return {
-        redirect: {
-          destination: `/login?next=${encodeURIComponent(context.resolvedUrl)}`,
-          permanent: false,
-        },
-      }
-    }
-    throw e
-  }
 }
 
 const MarkdownEditor = dynamic(
@@ -62,10 +25,7 @@ const MarkdownEditor = dynamic(
   },
 )
 
-export default function ReviewPage({
-  product,
-  review,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function ReviewForm({ product, review }: Props) {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [value, setValue] = useState<string>(review?.contents || '')
 
