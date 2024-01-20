@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
 
@@ -54,14 +55,16 @@ export default function ProductList({ initialProducts }: Props) {
     <div className="my-8">
       <div className="grid grid-cols-5 gap-4">
         {products?.map(({ id, title, price, imageUrls, createdAt }) => (
-          <div key={id}>
-            <Product
-              title={title}
-              price={price}
-              imageUrl={imageUrls[0]}
-              createdAt={createdAt}
-            />
-          </div>
+          <Link key={id} href={`/products/${id}`}>
+            <a>
+              <Product
+                title={title}
+                price={price}
+                imageUrl={imageUrls[0]}
+                createdAt={createdAt}
+              />
+            </a>
+          </Link>
         ))}
       </div>
       {isLoading && (

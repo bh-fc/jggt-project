@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 
@@ -16,16 +17,17 @@ export default function Header({ children }: Props) {
     <div className="sticky top-0 z-10 bg-white border-b">
       <Wrapper>
         <Container>
-          <div
-            className="flex justify-between items-center py-8 cursor-pointer"
-            onClick={() => router.push('/')}
-          >
-            <Text
-              size="4xl"
-              style={{ fontFamily: `'Black Han Sans', sans-serif` }}
-            >
-              🗃 중고장터
-            </Text>
+          <div className="flex justify-between items-center py-8">
+            <Link href="/" prefetch={false}>
+              <a>
+                <Text
+                  size="4xl"
+                  style={{ fontFamily: `'Black Han Sans', sans-serif` }}
+                >
+                  🗃 중고장터
+                </Text>
+              </a>
+            </Link>
             <Search />
             <div className="flex gap-2">
               <div className="flex items-center">

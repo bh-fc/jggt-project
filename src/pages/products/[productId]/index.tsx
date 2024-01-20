@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import 'dayjs/locale/ko'
+import Link from 'next/link'
 import { useState } from 'react'
 
 import ProductImage from './_components/ProductImage'
@@ -203,18 +204,20 @@ export default function ProductDetail({
                 <div>
                   <Text size="xl"> 비슷한 상품 </Text>
                 </div>
-                <div className="my-5 flex gap-3">
+                <div className="my-5 flex gap-3 flex-wrap">
                   {suggest
                     .slice(0, 3)
                     .map(({ id, title, price, createdAt, imageUrls }) => (
-                      <div key={id}>
-                        <Product
-                          title={title}
-                          price={price}
-                          createdAt={createdAt}
-                          imageUrl={imageUrls[0]}
-                        />
-                      </div>
+                      <Link key={id} href={`/products/${id}`}>
+                        <a className="w-44">
+                          <Product
+                            title={title}
+                            price={price}
+                            createdAt={createdAt}
+                            imageUrl={imageUrls[0]}
+                          />
+                        </a>
+                      </Link>
                     ))}
                 </div>
               </div>

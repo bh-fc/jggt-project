@@ -1,4 +1,5 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import Pagination from '@/components/common/Pagination'
@@ -73,14 +74,16 @@ export default function Search({
             <Text>검색 결과가 없습니다.</Text>
           ) : (
             products.map(({ id, title, price, createdAt, imageUrls }) => (
-              <div key={id}>
-                <Product
-                  title={title}
-                  price={price}
-                  createdAt={createdAt}
-                  imageUrl={imageUrls[0]}
-                />
-              </div>
+              <Link key={id} href={`/products/${id}`}>
+                <a>
+                  <Product
+                    title={title}
+                    price={price}
+                    createdAt={createdAt}
+                    imageUrl={imageUrls[0]}
+                  />
+                </a>
+              </Link>
             ))
           )}
         </div>
