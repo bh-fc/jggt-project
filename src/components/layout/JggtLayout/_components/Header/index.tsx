@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 
 import Search from './_components/Search'
@@ -11,8 +10,6 @@ import Wrapper from '@/components/layout/Wrapper'
 type Props = { children: ReactNode }
 
 export default function Header({ children }: Props) {
-  const router = useRouter()
-
   return (
     <div className="sticky top-0 z-10 bg-white border-b">
       <Wrapper>

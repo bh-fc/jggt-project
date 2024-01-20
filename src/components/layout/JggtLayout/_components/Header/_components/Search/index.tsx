@@ -1,5 +1,7 @@
+'use client'
+
 import classNames from 'classnames'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 import AutoComplete from './_components/AutoComplete'

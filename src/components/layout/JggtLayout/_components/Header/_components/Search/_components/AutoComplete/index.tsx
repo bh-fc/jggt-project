@@ -1,6 +1,7 @@
+'use client'
+
 import { throttle } from 'lodash'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 
 import Text from '@/components/common/Text'
@@ -14,7 +15,6 @@ type Props = {
 }
 
 export default function AutoComplete({ query, handleClose }: Props) {
-  const router = useRouter()
   const [keywords, setKeywords] = useState<string[]>([])
 
   const handleSearch = useMemo(

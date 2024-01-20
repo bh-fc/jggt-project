@@ -1,3 +1,5 @@
+'use client'
+
 import { FormEvent } from 'react'
 
 import Button from '@/components/common/Button'

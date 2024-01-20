@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { ReactNode } from 'react'
 
 import '@/styles/globals.css'
-import JggtLayout from '@/components/layout/AppJggtLayout'
+import JggtLayout from '@/components/layout/JggtLayout'
 
 type Props = {
   children: ReactNode
