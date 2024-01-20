@@ -10,6 +10,7 @@ import Messages from './_components/Messages'
 
 import Spinner from '@/components/common/Spinner'
 import Text from '@/components/common/Text'
+import { createChatMessage } from '@/repository/chatMessages/createChatMessage'
 import { getShop } from '@/repository/shops/getShop'
 import { Shop } from '@/types'
 import supabase from '@/utils/supabase/browserSupabase'
@@ -35,10 +36,13 @@ export default function ChatMessages({
     })()
   }, [counterShopId])
 
-  const handleSubmitMessage: FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmitMessage: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault()
     if (ref.current) {
-      alert(ref.current?.value)
+      await createChatMessage(supabase, {
+        chatRoomId,
+        message: ref.current.value,
+      })
       ref.current.value = ''
       ref.current.focus()
     }

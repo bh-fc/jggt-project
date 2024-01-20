@@ -25,6 +25,7 @@ export async function getChatRooms(
     .or(`from_shop_id.eq.${shopId}, to_shop_id.eq.${shopId}`)
 
   if (error) {
+    console.log(error)
     throw error
   }
 

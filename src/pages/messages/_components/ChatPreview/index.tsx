@@ -19,7 +19,7 @@ type Props = {
 
 export default function ChatPreview({ chatRoomId, shopId, isActive }: Props) {
   const [shop, setShop] = useState<Shop>()
-  const [lastMessage, setLastMessage] = useState<ChatMessage>()
+  const [lastMessage, setLastMessage] = useState<ChatMessage | null>()
 
   useEffect(() => {
     ;(async () => {
@@ -37,11 +37,11 @@ export default function ChatPreview({ chatRoomId, shopId, isActive }: Props) {
         }),
       ])
       setShop(shop)
-      setLastMessage(lastMessage)
+      setLastMessage(lastMessage === undefined ? null : lastMessage)
     })()
   }, [chatRoomId, shopId])
 
-  if (!shop || !lastMessage) {
+  if (shop === undefined || lastMessage === undefined) {
     return (
       <div className="flex justify-center items-center h-20 shrink-0">
         <Spinner />
@@ -65,11 +65,13 @@ export default function ChatPreview({ chatRoomId, shopId, isActive }: Props) {
             {shop.name}
           </Text>
           <div className="truncate">
-            <Text size="sm" color="grey">
-              {checkIsImage(lastMessage.message)
-                ? '[이미지]'
-                : lastMessage.message}
-            </Text>
+            {lastMessage && (
+              <Text size="sm" color="grey">
+                {checkIsImage(lastMessage.message)
+                  ? '[이미지]'
+                  : lastMessage.message}
+              </Text>
+            )}
           </div>
         </div>
       </a>

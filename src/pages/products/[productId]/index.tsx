@@ -18,6 +18,7 @@ import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
 import MarkdownViewerSkeleton from '@/components/shared/MarkdownViewer/Skeleton'
+import { createChatRoom } from '@/repository/chatRooms/createChatRoom'
 import { createdFollow } from '@/repository/followes/createFollow'
 import { deleteFollow } from '@/repository/followes/deleteFollow'
 import { getIsFollowedByShopId } from '@/repository/followes/getIsFollowedByShopId'
@@ -170,8 +171,9 @@ export default function ProductDetail({
     }
   })
 
-  const handleChat = checkAuth(() => {
-    alert('채팅하기')
+  const handleChat = checkAuth(async () => {
+    const { data: chatRoom } = await createChatRoom(supabase, shop.id)
+    router.push(`/messages/${chatRoom.id}`)
   })
 
   const handlePruchase = checkAuth(async () => {
