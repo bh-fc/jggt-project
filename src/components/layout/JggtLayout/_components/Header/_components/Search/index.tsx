@@ -4,6 +4,8 @@ import { useState } from 'react'
 import AutoComplete from './_components/AutoComplete'
 import Recent from './_components/Recent'
 
+import { addRecentKeyword } from '@/utils/localstorage'
+
 export default function Search() {
   const [search, setSearch] = useState('')
   const [isFocused, setIsFocused] = useState(false)
@@ -11,7 +13,14 @@ export default function Search() {
   return (
     <div className="relative">
       <div className="w-96 border-2 border-red-500 px-4 py-2">
-        <form className="flex justify-between">
+        <form
+          className="flex justify-between"
+          onSubmit={(e) => {
+            e.preventDefault()
+            // 최근 검색어 추가
+            addRecentKeyword(search)
+          }}
+        >
           <input
             className="w-full text-sm font-light outline-0"
             type="text"
