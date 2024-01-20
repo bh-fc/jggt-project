@@ -7,7 +7,7 @@ import Wrapper from '@/components/layout/Wrapper'
 
 type Props = {
   children: ReactNode
-  currentTab: 'new' | 'manage' | 'history'
+  currentTab?: 'new' | 'manage' | 'history'
 }
 
 export default function ProductsLayout({ children, currentTab }: Props) {

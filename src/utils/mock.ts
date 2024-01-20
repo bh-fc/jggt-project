@@ -8,7 +8,7 @@ export function getMockProductData(defaultValue?: Partial<Product>) {
     title: defaultValue?.title ?? faker.commerce.productName(),
     price:
       defaultValue?.price ?? faker.number.int({ min: 10, max: 1000 }) * 100,
-    address: defaultValue?.address ?? faker.location.city(),
+    address: defaultValue?.address ?? '서울특별시 중구',
     description: defaultValue?.description ?? faker.lorem.sentences(10, '\n'),
     imageUrls:
       defaultValue?.imageUrls ??
