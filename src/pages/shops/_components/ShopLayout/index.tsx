@@ -85,7 +85,7 @@ export default function ShopLayout({
                       accept=".jpg, .jpeg, .png"
                     />
                   </form>
-                  <Link href="/">
+                  <Link href="/products">
                     <a className="border border-white text-white px-3 py-2 my-2">
                       내 상점 관리
                     </a>
