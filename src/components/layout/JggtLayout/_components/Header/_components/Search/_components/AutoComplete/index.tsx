@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { throttle } from 'lodash'
+import { useEffect, useMemo, useState } from 'react'
 
 import Text from '@/components/common/Text'
 import { getProductsByKeyword } from '@/repository/products/getProductsByKeyword'
@@ -11,20 +12,26 @@ type Props = {
 export default function AutoComplete({ query, handleClose }: Props) {
   const [keywords, setKeywords] = useState<string[]>([])
 
+  const handleSearch = useMemo(
+    () =>
+      throttle(async (query: string) => {
+        if (!query) {
+          setKeywords([])
+          return
+        }
+        const { data } = await getProductsByKeyword({
+          query,
+          fromPage: 0,
+          toPage: 2,
+        })
+        setKeywords(data.map(({ title }) => title))
+      }, 500),
+    [],
+  )
+
   useEffect(() => {
-    ;(async () => {
-      if (!query) {
-        setKeywords([])
-        return
-      }
-      const { data } = await getProductsByKeyword({
-        query,
-        fromPage: 0,
-        toPage: 2,
-      })
-      setKeywords(data.map(({ title }) => title))
-    })()
-  }, [query])
+    handleSearch(query)
+  }, [handleSearch, query])
 
   return (
     <div className="flex flex-col h-full">
