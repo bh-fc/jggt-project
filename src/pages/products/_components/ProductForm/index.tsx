@@ -11,6 +11,7 @@ import Container from '@/components/layout/Container'
 import MarkdownEditorSkeleton from '@/components/shared/MarkdownEditor/Skeleton'
 import { uploadImage } from '@/repository/common/uploadImage'
 import { createProduct } from '@/repository/products/createProduct'
+import { updateProduct } from '@/repository/products/updateProduct'
 import { City, cities, getDistricts } from '@/utils/address'
 import supabase from '@/utils/supabase/browserSupabase'
 
@@ -47,6 +48,8 @@ export default function ProductForm({
   description: defaultDescription,
   tags: defaultTags,
 }: Partial<Props>) {
+  const formType = defaultId ? 'edit' : 'new'
+
   const router = useRouter()
   const tagInputRef = useRef<HTMLInputElement>(null)
   const [tags, setTags] = useState<string[]>(defaultTags || [])
@@ -54,7 +57,7 @@ export default function ProductForm({
   const [description, setDescription] = useState<string>(
     defaultDescription || '',
   )
-  const [imageUrls, setImageUrls] = useState<string[]>([])
+  const [imageUrls, setImageUrls] = useState<string[]>(defaultImageUrls || [])
   const [isLoading, setIsLoading] = useState(false)
 
   const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
@@ -125,26 +128,45 @@ export default function ProductForm({
       const isChangeable = formData.get('isChangeable') === 'y'
       const isUsed = formData.get('isUsed') === 'y'
 
-      const { data } = await createProduct(supabase, {
-        title,
-        price,
-        address,
-        description,
-        isChangeable,
-        isUsed,
-        tags,
-        imageUrls,
-      })
-      router.push(`/products/${data?.id}`)
+      if (formType === 'new') {
+        const { data } = await createProduct(supabase, {
+          title,
+          price,
+          address,
+          description,
+          isChangeable,
+          isUsed,
+          tags,
+          imageUrls,
+        })
+        router.push(`/products/${data.id}`)
+      } else {
+        const { data } = await updateProduct(supabase, {
+          id,
+          title,
+          price,
+          address,
+          description,
+          isChangeable,
+          isUsed,
+          tags,
+          imageUrls,
+        })
+        router.push(`/products/${data.id}`)
+      }
     } catch (e) {
-      alert('상품 등록에 실패했습니다')
+      if (formType === 'edit') {
+        alert('상품 수정에 실패했습니다')
+      } else {
+        alert('상품 등록에 실패했습니다')
+      }
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <ProductsLayout currentTab={defaultId ? undefined : 'new'}>
+    <ProductsLayout currentTab={formType === 'edit' ? undefined : 'new'}>
       <form onSubmit={handleSubmit}>
         {defaultId && (
           <input type="hidden" name="id" defaultValue={defaultId} />
@@ -152,7 +174,7 @@ export default function ProductForm({
         <Container>
           <div className="my-10 border-b-2 border-black py-7">
             <Text size="2xl" className="mr-3">
-              {defaultId ? '수정하기' : '상품정보'}
+              {formType === 'edit' ? '수정하기' : '상품정보'}
             </Text>
             <Text size="md" color="red">
               * 필수정보
@@ -419,8 +441,8 @@ export default function ProductForm({
         <div className="sticky bottom-0 z-50 bg-gray-100 py-4 border-t border-gray-200">
           <Container>
             <div className="flex justify-end">
-              <Button color="red" className="w-28 h-12">
-                {defaultId ? '수정하기' : '등록하기'}
+              <Button color="red" className="w-28 h-12" isLoading={isLoading}>
+                {formType === 'edit' ? '수정하기' : '등록하기'}
               </Button>
             </div>
           </Container>

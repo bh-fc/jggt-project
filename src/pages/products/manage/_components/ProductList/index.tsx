@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import Button from '@/components/common/Button'
 import Pagination from '@/components/common/Pagination'
 import Text from '@/components/common/Text'
+import { deleteProduct } from '@/repository/products/deleteProduct'
 import { getShopProducts } from '@/repository/shops/getShopProducts'
 import { Product } from '@/types'
 import supabase from '@/utils/supabase/browserSupabase'
@@ -34,12 +35,16 @@ export default function ProductList({ initialProducts, count, shopId }: Props) {
     })()
   }, [currentPage, shopId])
 
-  const handleEditProduct = (productId: string) => {
-    alert('EDIT')
-  }
-
-  const handleDeleteProduct = (productId: string) => {
-    alert('DELETE')
+  const handleDeleteProduct = async (productId: string) => {
+    if (window.confirm('정말 삭제하시겠습니까?')) {
+      try {
+        deleteProduct(supabase, productId)
+      } catch (e) {
+        alert('삭제에 실패했습니다')
+      } finally {
+        window.location.reload()
+      }
+    }
   }
 
   return (
@@ -78,14 +83,13 @@ export default function ProductList({ initialProducts, count, shopId }: Props) {
                 </div>
                 <div className="w-28 flex justify-center items-center">
                   <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      color="orange"
-                      className="h-8 w-15"
-                      onClick={() => handleEditProduct(id)}
-                    >
-                      수정
-                    </Button>
+                    <Link href={`/products/edit/${id}`}>
+                      <a>
+                        <Button size="sm" color="orange" className="h-8 w-15">
+                          수정
+                        </Button>
+                      </a>
+                    </Link>
                     <Button
                       size="sm"
                       color="red"
