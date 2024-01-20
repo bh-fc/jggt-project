@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
+import RecentItem from './_components/RecentItem'
+
 import Spinner from '@/components/common/Spinner'
 import Text from '@/components/common/Text'
 import { getProduct } from '@/repository/products/getProduct'
@@ -51,13 +53,17 @@ export default function Recent() {
           <Text size="sm" color="red" weight="bold">
             {recentProducts.length}
           </Text>
-          <div className="border-t border-black border-dashed pt-3 mt-2">
+          <div className="border-t border-black border-dashed pt-3 mt-2 flex flex-col gap-2">
             {recentProducts
               .slice(currentPage * 3, (currentPage + 1) * 3)
               .map(({ id, title, price, imageUrls }) => (
-                <div key={id}>
-                  <img src={imageUrls[0]} alt={title} />
-                </div>
+                <RecentItem
+                  key={id}
+                  id={id}
+                  title={title}
+                  price={price}
+                  imageUrl={imageUrls[0]}
+                />
               ))}
           </div>
           <div className="flex justify-between items-center mt-2 gap-1">
