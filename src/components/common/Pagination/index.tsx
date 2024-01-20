@@ -25,7 +25,11 @@ export default function Pagination({
 
   return (
     <div className="flex gap-1 my-3">
-      <button className={btnClassName} disabled={currentPage === 1}>
+      <button
+        className={btnClassName}
+        disabled={currentPage === 1}
+        onClick={() => handlePageChange(currentPage - 1)}
+      >
         이전
       </button>
       {Array.from({ length: endPageIndex - startPageIndex + 1 }).map(
@@ -44,7 +48,11 @@ export default function Pagination({
           )
         },
       )}
-      <button className={btnClassName} disabled={currentPage === totalPage}>
+      <button
+        className={btnClassName}
+        disabled={currentPage === totalPage}
+        onClick={() => handlePageChange(currentPage + 1)}
+      >
         다음
       </button>
     </div>
