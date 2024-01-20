@@ -2,7 +2,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 import ShopLayout from '../../_components/ShopLayout'
 
-import ProductList from './_components/ProductList'
+import ReviewList from './_components/ReviewList'
 
 import Text from '@/components/common/Text'
 import { getShop } from '@/repository/shops/getShop'
@@ -10,9 +10,9 @@ import { getShopFollowerCount } from '@/repository/shops/getShopFollowerCount'
 import { getShopFollowingCount } from '@/repository/shops/getShopFollowingCount'
 import { getShopLikeCount } from '@/repository/shops/getShopLikeCount'
 import { getShopProductCount } from '@/repository/shops/getShopProductCount'
-import { getShopProducts } from '@/repository/shops/getShopProducts'
 import { getShopReviewCount } from '@/repository/shops/getShopReviewCount'
-import { Product, Shop } from '@/types'
+import { getShopReviews } from '@/repository/shops/getShopReviews'
+import { Review, Shop } from '@/types'
 
 export const getServerSideProps: GetServerSideProps<{
   shop: Shop
@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps<{
   likeCount: number
   followingCount: number
   followerCount: number
-  products: Product[]
+  reviews: Review[]
 }> = async (context) => {
   const shopId = context.query.shopId as string
 
@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps<{
     { data: likeCount },
     { data: followingCount },
     { data: followerCount },
-    { data: products },
+    { data: reviews },
   ] = await Promise.all([
     getShop(shopId),
     getShopProductCount(shopId),
@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps<{
     getShopLikeCount(shopId),
     getShopFollowingCount(shopId),
     getShopFollowerCount(shopId),
-    getShopProducts({ shopId, fromPage: 0, toPage: 1 }),
+    getShopReviews({ shopId, fromPage: 0, toPage: 1 }),
   ])
 
   return {
@@ -51,19 +51,19 @@ export const getServerSideProps: GetServerSideProps<{
       likeCount,
       followingCount,
       followerCount,
-      products,
+      reviews,
     },
   }
 }
 
-export default function ShopProducts({
+export default function ShopReviews({
   shop,
   productCount,
   reviewCount,
   likeCount,
   followingCount,
   followerCount,
-  products,
+  reviews: initialReviews,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <ShopLayout
@@ -73,17 +73,17 @@ export default function ShopProducts({
       likeCount={likeCount}
       followingCount={followingCount}
       followerCount={followerCount}
-      currentTab="products"
+      currentTab="reviews"
     >
       <div className="mt-9 mb-5">
-        <Text size="lg"> 상품 </Text>
+        <Text size="lg"> 후기 </Text>
         <Text size="lg" color="red">
-          {productCount.toLocaleString()}개
+          {reviewCount.toLocaleString()}개
         </Text>
       </div>
-      <ProductList
-        initialProducts={products}
-        count={productCount}
+      <ReviewList
+        initialReviews={initialReviews}
+        count={reviewCount}
         shopId={shop.id}
       />
     </ShopLayout>

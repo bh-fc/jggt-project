@@ -367,7 +367,7 @@ export default function ProductDetail({
                   ))}
               </div>
               <div>
-                <Link href="">
+                <Link href={`/shops/${shop.id}/reviews`}>
                   <a className="block border-y text-center py-2">
                     <Text color="grey" size="sm">
                       상점후기 더 보기 {'>'}
