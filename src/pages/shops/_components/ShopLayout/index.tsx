@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import Link from 'next/link'
-import { ReactNode, useState } from 'react'
+import { FormEvent, ReactNode, useState } from 'react'
 import 'dayjs/locale/ko'
 
 import Button from '@/components/common/Button'
@@ -11,8 +11,10 @@ import ShopProfileImage from '@/components/common/ShopProfileImage'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
+import { updateShopIntroduce } from '@/repository/shops/updateShopIntroduce'
+import { updateShopName } from '@/repository/shops/updateShopName'
 import { Shop } from '@/types'
-import { timeout } from '@/utils/mock'
+import supabase from '@/utils/supabase/browserSupabase'
 
 dayjs.extend(relativeTime).locale('ko')
 
@@ -43,20 +45,45 @@ export default function ShopLayout({
   currentTab,
   children,
 }: Props) {
+  const [shopName, setShopName] = useState(shop.name)
+  const [shopIntroduce, setShopIntroduce] = useState(shop.introduce)
+
   const [shopNameStatus, setShopNameState] = useState<EDIT_STUATUS>('IDLE')
-  const [shopDescriptionStatus, setShopDescriptionState] =
+  const [shopIntroduceStatus, setShopIntroduceState] =
     useState<EDIT_STUATUS>('IDLE')
 
-  const handleSubmitShopName = async () => {
-    setShopNameState('LOADING')
-    await timeout(2000)
-    setShopNameState('IDLE')
+  const handleSubmitShopName = async (e: FormEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault()
+      setShopNameState('LOADING')
+
+      const formData = new FormData(e.currentTarget)
+      const name = formData.get('name') as string
+
+      await updateShopName(supabase, { shopId: shop.id, name })
+      setShopName(name)
+    } catch (e) {
+      alert('상점명 수정에 실패했습니다.')
+    } finally {
+      setShopNameState('IDLE')
+    }
   }
 
-  const handleSubmitShopDescription = async () => {
-    setShopDescriptionState('LOADING')
-    await timeout(2000)
-    setShopDescriptionState('IDLE')
+  const handleSubmitShopIntroduce = async (e: FormEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault()
+      setShopIntroduceState('LOADING')
+
+      const formData = new FormData(e.currentTarget)
+      const introduce = formData.get('introduce') as string
+
+      await updateShopIntroduce(supabase, { shopId: shop.id, introduce })
+      setShopIntroduce(introduce)
+    } catch (e) {
+      alert('상점 소개 수정에 실패했습니다.')
+    } finally {
+      setShopIntroduceState('IDLE')
+    }
   }
 
   const handleSubmitShopProfileImage = async () => {
@@ -98,7 +125,7 @@ export default function ShopLayout({
                 {isMyShop ? (
                   shopNameStatus === 'IDLE' ? (
                     <>
-                      <Text size="lg">{shop.name}</Text>
+                      <Text size="lg">{shopName}</Text>
                       <Button
                         size="xs"
                         className="ml-2"
@@ -109,8 +136,9 @@ export default function ShopLayout({
                       </Button>
                     </>
                   ) : (
-                    <>
+                    <form onSubmit={handleSubmitShopName}>
                       <Input
+                        name="name"
                         className="text-xs w-60"
                         placeholder="새 닉네임을 입력하세요 (2자 이상)"
                         disabled={shopNameStatus === 'LOADING'}
@@ -119,16 +147,16 @@ export default function ShopLayout({
                         minLength={2}
                       />
                       <Button
+                        type="submit"
                         className="text-sm w-20"
                         isLoading={shopNameStatus === 'LOADING'}
-                        onClick={() => handleSubmitShopName()}
                       >
                         확인
                       </Button>
-                    </>
+                    </form>
                   )
                 ) : (
-                  <Text size="lg">{shop.name}</Text>
+                  <Text size="lg">{shopName}</Text>
                 )}
               </div>
               <div className="pl-4 flex gap-2 border-y border-slate-200 py-2">
@@ -147,43 +175,47 @@ export default function ShopLayout({
               </div>
               <div className="flex flex-col flex-1 px-4 overflow-hidden">
                 {isMyShop ? (
-                  shopDescriptionStatus === 'IDLE' ? (
+                  shopIntroduceStatus === 'IDLE' ? (
                     <>
                       <Text size="sm" className="block overflow-scroll h-full">
-                        {shop.introduce}
+                        {shopIntroduce}
                       </Text>
                       <Button
                         size="xs"
                         outline
                         className="w-20"
-                        onClick={() => setShopDescriptionState('EDIT')}
+                        onClick={() => setShopIntroduceState('EDIT')}
                       >
                         소개글 수정
                       </Button>
                     </>
                   ) : (
-                    <>
+                    <form
+                      onSubmit={handleSubmitShopIntroduce}
+                      className="flex h-full flex-1"
+                    >
                       <textarea
-                        className="flex-1 p-1 mb-2 text-sm border outline-none disabled:opacity-50"
+                        name="introduce"
+                        className="flex-1 p-1 text-sm border outline-none disabled:opacity-50"
                         placeholder="소개글을 입력해주세요"
-                        disabled={shopDescriptionStatus === 'LOADING'}
+                        disabled={shopIntroduceStatus === 'LOADING'}
                       >
-                        {shop.introduce}
+                        {shopIntroduce}
                       </textarea>
                       <Button
+                        type="submit"
                         size="xs"
                         outline
                         className="w-20"
-                        isLoading={shopDescriptionStatus === 'LOADING'}
-                        onClick={() => handleSubmitShopDescription()}
+                        isLoading={shopIntroduceStatus === 'LOADING'}
                       >
                         확인
                       </Button>
-                    </>
+                    </form>
                   )
                 ) : (
                   <Text size="sm" className="block overflow-scroll h-full">
-                    {shop.introduce}
+                    {shopIntroduce}
                   </Text>
                 )}
               </div>
