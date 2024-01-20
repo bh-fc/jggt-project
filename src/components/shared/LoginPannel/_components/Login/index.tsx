@@ -2,7 +2,7 @@ import { FormEvent } from 'react'
 
 import Button from '@/components/common/Button'
 import Input from '@/components/common/Input'
-import supabase from '@/utils/supabase'
+import supabase from '@/utils/supabase/browserSupabase'
 
 interface Props {
   handleSetType: (type?: 'login' | 'signup') => void

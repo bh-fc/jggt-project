@@ -31,6 +31,7 @@ import { getShopReviewCount } from '@/repository/shops/getShopReviewCount'
 import { getShopReviews } from '@/repository/shops/getShopReviews'
 import { Review, Product as TProdct, Shop as TShop } from '@/types'
 import { addRecentItemId } from '@/utils/localstorage'
+import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
 export const getServerSideProps: GetServerSideProps<{
   product: TProdct
@@ -45,12 +46,14 @@ export const getServerSideProps: GetServerSideProps<{
   reviews: Review[]
   reviewCount: number
 }> = async (context) => {
+  const supabase = getServerSupabase(context)
+
   const productId = context.query.productId as string
 
   const { data: product } = await getProduct(productId)
   const {
     data: { shopId: myShopId },
-  } = await getMe()
+  } = await getMe(supabase)
 
   const [
     { data: isLiked },

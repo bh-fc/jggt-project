@@ -2,11 +2,14 @@ import { GetServerSideProps } from 'next'
 
 import LoginPannel from '@/components/shared/LoginPannel'
 import { getMe } from '@/repository/me/getMe'
+import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const supabase = getServerSupabase(context)
+
   const {
     data: { shopId },
-  } = await getMe()
+  } = await getMe(supabase)
 
   if (shopId) {
     const destination = context.query.next

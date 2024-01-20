@@ -4,12 +4,15 @@ import ProductForm from '../_components/ProductForm'
 
 import { getMe } from '@/repository/me/getMe'
 import { AuthError } from '@/utils/error'
+import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
 export const getServerSideProps: GetServerSideProps<{}> = async (context) => {
+  const supabase = getServerSupabase(context)
+
   try {
     const {
       data: { shopId },
-    } = await getMe()
+    } = await getMe(supabase)
 
     if (!shopId) {
       throw new AuthError()

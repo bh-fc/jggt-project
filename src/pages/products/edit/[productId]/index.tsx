@@ -7,14 +7,17 @@ import { getProduct } from '@/repository/products/getProduct'
 import { Product } from '@/types'
 import { City } from '@/utils/address'
 import { AuthError } from '@/utils/error'
+import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
 export const getServerSideProps: GetServerSideProps<{
   product: Product
 }> = async (context) => {
+  const supabase = getServerSupabase(context)
+
   try {
     const {
       data: { shopId },
-    } = await getMe()
+    } = await getMe(supabase)
 
     if (!shopId) {
       throw new AuthError()

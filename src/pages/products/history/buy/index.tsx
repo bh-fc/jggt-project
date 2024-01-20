@@ -11,16 +11,19 @@ import { getShopBuyCount } from '@/repository/shops/getShopBuyCount'
 import { getShopBuys } from '@/repository/shops/getShopBuys'
 import { Product } from '@/types'
 import { AuthError } from '@/utils/error'
+import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
 export const getServerSideProps: GetServerSideProps<{
   products: Product[]
   count: number
   shopId: string
 }> = async (context) => {
+  const supabase = getServerSupabase(context)
+
   try {
     const {
       data: { shopId },
-    } = await getMe()
+    } = await getMe(supabase)
 
     if (!shopId) {
       throw new AuthError()

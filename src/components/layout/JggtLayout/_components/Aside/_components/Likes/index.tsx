@@ -5,6 +5,7 @@ import Spinner from '@/components/common/Spinner'
 import Text from '@/components/common/Text'
 import { getMe } from '@/repository/me/getMe'
 import { getShopLikeCount } from '@/repository/shops/getShopLikeCount'
+import supabase from '@/utils/supabase/browserSupabase'
 
 export default function Likes() {
   const [shopId, setShopId] = useState<string>()
@@ -14,7 +15,7 @@ export default function Likes() {
     ;(async () => {
       const {
         data: { shopId },
-      } = await getMe()
+      } = await getMe(supabase)
 
       if (shopId === null) {
         setLikeCount(0)

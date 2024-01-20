@@ -5,7 +5,7 @@ import Spinner from '@/components/common/Spinner'
 import Text from '@/components/common/Text'
 import LoginPannel from '@/components/shared/LoginPannel'
 import { getMe } from '@/repository/me/getMe'
-import supabase from '@/utils/supabase'
+import supabase from '@/utils/supabase/browserSupabase'
 
 export default function Login() {
   const [showModal, setShowModal] = useState(false)
@@ -23,7 +23,7 @@ export default function Login() {
     ;(async () => {
       const {
         data: { shopId },
-      } = await getMe()
+      } = await getMe(supabase)
       setIsLoggedIn(!!shopId)
     })()
   }, [])

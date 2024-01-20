@@ -14,6 +14,7 @@ import { getShopProductCount } from '@/repository/shops/getShopProductCount'
 import { getShopProducts } from '@/repository/shops/getShopProducts'
 import { getShopReviewCount } from '@/repository/shops/getShopReviewCount'
 import { Product, Shop } from '@/types'
+import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
 export const getServerSideProps: GetServerSideProps<{
   isMyShop: boolean
@@ -25,6 +26,8 @@ export const getServerSideProps: GetServerSideProps<{
   followerCount: number
   products: Product[]
 }> = async (context) => {
+  const supabase = getServerSupabase(context)
+
   const shopId = context.query.shopId as string
 
   const [
@@ -39,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<{
     { data: followerCount },
     { data: products },
   ] = await Promise.all([
-    getMe(),
+    getMe(supabase),
     getShop(shopId),
     getShopProductCount(shopId),
     getShopReviewCount(shopId),
