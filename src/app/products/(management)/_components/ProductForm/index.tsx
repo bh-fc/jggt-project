@@ -2,7 +2,12 @@
 
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import { ChangeEventHandler, FormEvent, useRef, useState } from 'react'
+import { ChangeEventHandler, useEffect, useRef, useState } from 'react'
+// @ts-ignore
+import { experimental_useFormState as useFormState } from 'react-dom'
+
+import SubmitButton from './_components/SubmitButton'
+import { createProductAction, updateProductAction } from './action'
 
 import Button from '@/components/common/Button'
 import Input from '@/components/common/Input'
@@ -10,8 +15,6 @@ import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import MarkdownEditorSkeleton from '@/components/shared/MarkdownEditor/Skeleton'
 import { uploadImage } from '@/repository/common/uploadImage'
-import { createProduct } from '@/repository/products/createProduct'
-import { updateProduct } from '@/repository/products/updateProduct'
 import { City, cities, getDistricts } from '@/utils/address'
 import supabase from '@/utils/supabase/browserSupabase'
 
@@ -48,9 +51,23 @@ export default function ProductForm({
   description: defaultDescription,
   tags: defaultTags,
 }: Partial<Props>) {
+  const router = useRouter()
+
   const formType = defaultId ? 'edit' : 'new'
 
-  const router = useRouter()
+  const [state, formAction] = useFormState(
+    formType === 'new' ? createProductAction : updateProductAction,
+    {},
+  )
+
+  useEffect(() => {
+    if (state.errorMessage) {
+      alert(state.errorMessage)
+    } else if (state.data) {
+      router.push(`/products/${state.data.id}`)
+    }
+  }, [router, state])
+
   const tagInputRef = useRef<HTMLInputElement>(null)
   const [tags, setTags] = useState<string[]>(defaultTags || [])
   const [city, setCity] = useState<City | undefined>(defaultCity)
@@ -58,7 +75,6 @@ export default function ProductForm({
     defaultDescription || '',
   )
   const [imageUrls, setImageUrls] = useState<string[]>(defaultImageUrls || [])
-  const [isLoading, setIsLoading] = useState(false)
 
   const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
     if (e.target.files?.[0]) {
@@ -102,71 +118,8 @@ export default function ProductForm({
     )
   }
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    try {
-      e.preventDefault()
-      setIsLoading(true)
-      const formData = new FormData(e.currentTarget)
-
-      const tags = formData.getAll('tags') as string[]
-      const imageUrls = formData.getAll('imageUrls') as string[]
-
-      if (imageUrls.length === 0) {
-        alert('상품 이미지를 1개 이상 등록해주세요.')
-        setIsLoading(false)
-        return
-      }
-
-      const id = formData.get('id') as string
-      const title = formData.get('title') as string
-      const price = parseInt(formData.get('price') as string)
-      const city = formData.get('city') as string
-      const district = formData.get('district') as string
-      const address = `${city} ${district}`
-      const description = formData.get('description') as string
-
-      const isChangeable = formData.get('isChangeable') === 'y'
-      const isUsed = formData.get('isUsed') === 'y'
-
-      if (formType === 'new') {
-        const { data } = await createProduct(supabase, {
-          title,
-          price,
-          address,
-          description,
-          isChangeable,
-          isUsed,
-          tags,
-          imageUrls,
-        })
-        router.push(`/products/${data.id}`)
-      } else {
-        const { data } = await updateProduct(supabase, {
-          id,
-          title,
-          price,
-          address,
-          description,
-          isChangeable,
-          isUsed,
-          tags,
-          imageUrls,
-        })
-        router.push(`/products/${data.id}`)
-      }
-    } catch (e) {
-      if (formType === 'edit') {
-        alert('상품 수정에 실패했습니다')
-      } else {
-        alert('상품 등록에 실패했습니다')
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
-    <form onSubmit={handleSubmit}>
+    <form action={formAction}>
       {defaultId && <input type="hidden" name="id" defaultValue={defaultId} />}
       <Container>
         <div className="my-10 border-b-2 border-black py-7">
@@ -439,9 +392,9 @@ export default function ProductForm({
       <div className="sticky bottom-0 z-50 bg-gray-100 py-4 border-t border-gray-200">
         <Container>
           <div className="flex justify-end">
-            <Button color="red" className="w-28 h-12" isLoading={isLoading}>
+            <SubmitButton>
               {formType === 'edit' ? '수정하기' : '등록하기'}
-            </Button>
+            </SubmitButton>
           </div>
         </Container>
       </div>
