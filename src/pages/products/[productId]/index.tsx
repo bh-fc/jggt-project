@@ -3,6 +3,7 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import 'dayjs/locale/ko'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 import ProductImage from './_components/ProductImage'
@@ -114,6 +115,7 @@ export default function ProductDetail({
   isLiked: initialIsLiked,
   isFollowed: initialIsFollowed,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const router = useRouter()
   const [isLiked, setIsLiked] = useState(initialIsLiked)
   const [isFollowed, setIsFollowed] = useState(initialIsFollowed)
 
@@ -301,11 +303,13 @@ export default function ProductDetail({
                 productCount={productCount}
                 followerCount={followerCount}
                 type="row"
-                handleClickTitle={() => alert('handleClickTitle')}
-                handleClickProfileImage={() => alert('handleClickProfileImage')}
-                handleClickProductCount={() => alert('handleClickProductCount')}
-                handleClickFollowerCount={() =>
-                  alert('handleClickFollowerCount')
+                handleClickTitle={() => router.push(`/shops/${shop.id}`)}
+                handleClickProfileImage={() => router.push(`/shops/${shop.id}`)}
+                handleClickProductCount={() =>
+                  router.push(`/shops/${shop.id}/products`)
+                }
+                handleClickFollowerCount={() => () =>
+                  router.push(`/shops/${shop.id}/follower`)
                 }
               />
             </div>

@@ -1,15 +1,18 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import 'dayjs/locale/ko'
 
 import ShopLayout from '../../_components/ShopLayout'
 
+import ProductList from './_components/ProductList'
+
+import Text from '@/components/common/Text'
 import { getShop } from '@/repository/shops/getShop'
 import { getShopFollowerCount } from '@/repository/shops/getShopFollowerCount'
 import { getShopFollowingCount } from '@/repository/shops/getShopFollowingCount'
 import { getShopLikeCount } from '@/repository/shops/getShopLikeCount'
 import { getShopProductCount } from '@/repository/shops/getShopProductCount'
+import { getShopProducts } from '@/repository/shops/getShopProducts'
 import { getShopReviewCount } from '@/repository/shops/getShopReviewCount'
-import { Shop } from '@/types'
+import { Product, Shop } from '@/types'
 
 export const getServerSideProps: GetServerSideProps<{
   shop: Shop
@@ -18,6 +21,7 @@ export const getServerSideProps: GetServerSideProps<{
   likeCount: number
   followingCount: number
   followerCount: number
+  products: Product[]
 }> = async (context) => {
   const shopId = context.query.shopId as string
 
@@ -28,6 +32,7 @@ export const getServerSideProps: GetServerSideProps<{
     { data: likeCount },
     { data: followingCount },
     { data: followerCount },
+    { data: products },
   ] = await Promise.all([
     getShop(shopId),
     getShopProductCount(shopId),
@@ -35,6 +40,7 @@ export const getServerSideProps: GetServerSideProps<{
     getShopLikeCount(shopId),
     getShopFollowingCount(shopId),
     getShopFollowerCount(shopId),
+    getShopProducts({ shopId, fromPage: 0, toPage: 1 }),
   ])
 
   return {
@@ -45,6 +51,7 @@ export const getServerSideProps: GetServerSideProps<{
       likeCount,
       followingCount,
       followerCount,
+      products,
     },
   }
 }
@@ -56,6 +63,7 @@ export default function ShopProducts({
   likeCount,
   followingCount,
   followerCount,
+  products,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <ShopLayout
@@ -67,7 +75,17 @@ export default function ShopProducts({
       followerCount={followerCount}
       currentTab="products"
     >
-      hihihi
+      <div className="mt-9 mb-5 ">
+        <Text size="lg"> 상품 </Text>
+        <Text size="lg" color="red">
+          {productCount.toLocaleString()}개
+        </Text>
+      </div>
+      <ProductList
+        initialProducts={products}
+        count={productCount}
+        shopId={shop.id}
+      />
     </ShopLayout>
   )
 }

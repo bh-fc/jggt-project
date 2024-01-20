@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import Shop from '@/components/common/Shop'
@@ -33,14 +34,16 @@ export default function SearchShopItem({ id, name, profileImageUrl }: Props) {
   }
 
   return (
-    <div className="border border-grey-300 p-5">
-      <Shop
-        type="row"
-        name={name}
-        productCount={productCount}
-        followerCount={followerCount}
-        profileImageUrl={profileImageUrl}
-      />
-    </div>
+    <Link href={`/shops/${id}`}>
+      <a className="border border-grey-300 p-5">
+        <Shop
+          type="row"
+          name={name}
+          productCount={productCount}
+          followerCount={followerCount}
+          profileImageUrl={profileImageUrl}
+        />
+      </a>
+    </Link>
   )
 }

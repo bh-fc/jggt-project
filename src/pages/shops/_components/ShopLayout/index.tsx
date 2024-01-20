@@ -71,7 +71,7 @@ export default function ShopLayout({
           </div>
         </div>
         <div className="flex w-full h-12 mt-6">
-          <Link href="/">
+          <Link href={`/shops/${shop.id}/products`}>
             <a
               className={classNames(
                 'flex-1 border flex justify-center items-center',
@@ -83,7 +83,7 @@ export default function ShopLayout({
               상품 <Text className="ml-2">{productCount.toLocaleString()}</Text>
             </a>
           </Link>
-          <Link href="/">
+          <Link href={`/shops/${shop.id}/reviews`}>
             <a
               className={classNames(
                 'flex-1 border flex justify-center items-center',
@@ -96,7 +96,7 @@ export default function ShopLayout({
               <Text className="ml-2">{reviewCount.toLocaleString()}</Text>
             </a>
           </Link>
-          <Link href="/">
+          <Link href={`/shops/${shop.id}/likes`}>
             <a
               className={classNames(
                 'flex-1 border flex justify-center items-center',
@@ -108,7 +108,7 @@ export default function ShopLayout({
               찜 <Text className="ml-2">{likeCount.toLocaleString()}</Text>
             </a>
           </Link>
-          <Link href="/">
+          <Link href={`/shops/${shop.id}/following`}>
             <a
               className={classNames(
                 'flex-1 border flex justify-center items-center',
@@ -121,7 +121,7 @@ export default function ShopLayout({
               <Text className="ml-2">{followingCount.toLocaleString()}</Text>
             </a>
           </Link>
-          <Link href="/">
+          <Link href={`/shops/${shop.id}/follower`}>
             <a
               className={classNames(
                 'flex-1 border flex justify-center items-center',
