@@ -11,6 +11,7 @@ import getChatMessageCount from '@/repository/chatMessages/getChatMessageCount'
 import { getChatMessages } from '@/repository/chatMessages/getChatMessages'
 import { ChatMessage } from '@/types'
 import { checkIsImage } from '@/utils/image'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   chatRoomId: string
@@ -35,12 +36,12 @@ export default function Messages({
   useEffect(() => {
     ;(async () => {
       const [{ data: messages }, { data: count }] = await Promise.all([
-        getChatMessages({
+        getChatMessages(supabase, {
           chatRoomId,
           fromIndex: 0,
           toIndex: 10,
         }),
-        getChatMessageCount(chatRoomId),
+        getChatMessageCount(supabase, chatRoomId),
       ])
       setMessage([...messages.reverse()])
       const firstItemIndex = count - messages.length
@@ -64,7 +65,7 @@ export default function Messages({
 
     setIsLoading(true)
 
-    const { data } = await getChatMessages({
+    const { data } = await getChatMessages(supabase, {
       chatRoomId,
       fromIndex,
       toIndex,

@@ -1,12 +1,32 @@
-import { ChatRoom } from '@/types'
-import { getMockChatRoomData } from '@/utils/mock'
+import { SupabaseClient } from '@supabase/supabase-js'
+import camelcaseKeys from 'camelcase-keys'
 
-export async function getChatRooms(shopId: string): Promise<{
+import { ChatRoom } from '@/types'
+
+export async function getChatRooms(
+  supabase: SupabaseClient,
+  shopId: string,
+): Promise<{
   data: ChatRoom[]
 }> {
-  const data: ChatRoom[] = Array.from({ length: 1000 }).map((_) =>
-    getMockChatRoomData({ toShopId: shopId }),
-  )
+  if (process.env.USE_MOCK_DATA === 'true') {
+    const { getMockChatRoomData } = await import('@/utils/mock')
 
-  return Promise.resolve({ data })
+    const data: ChatRoom[] = Array.from({ length: 1000 }).map((_) =>
+      getMockChatRoomData({ toShopId: shopId }),
+    )
+
+    return { data }
+  }
+
+  const { data, error } = await supabase
+    .from('chat_rooms')
+    .select('*')
+    .or(`from_shop_id.eq.${shopId}, to_shop_id.eq.${shopId}`)
+
+  if (error) {
+    throw error
+  }
+
+  return { data: camelcaseKeys(data, { deep: true }) }
 }

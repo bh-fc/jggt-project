@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps<{
       throw new AuthError()
     }
 
-    const { data: chatRooms } = await getChatRooms(shopId)
+    const { data: chatRooms } = await getChatRooms(supabase, shopId)
 
     return {
       props: { chatRooms, shopId },

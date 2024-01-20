@@ -30,7 +30,7 @@ export default function ChatPreview({ chatRoomId, shopId, isActive }: Props) {
         },
       ] = await Promise.all([
         getShop(supabase, shopId),
-        getChatMessages({
+        getChatMessages(supabase, {
           chatRoomId,
           fromIndex: 0,
           toIndex: 1,
