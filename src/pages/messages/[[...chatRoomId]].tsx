@@ -1,5 +1,6 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
+import { Virtuoso } from 'react-virtuoso'
 
 import ChatMessages from './_components/ChatMessages'
 import ChatPreview from './_components/ChatPreview'
@@ -57,15 +58,21 @@ export default function Messages({
               </div>
             ) : (
               <div className="flex flex-col flex-1">
-                {chatRooms.map(({ id, fromShopId, toShopId }) => {
-                  return (
+                <Virtuoso
+                  initialTopMostItemIndex={Math.max(
+                    chatRooms.findIndex(({ id }) => id === currentChatRoomId),
+                    0,
+                  )}
+                  data={chatRooms}
+                  itemContent={(_, { id, fromShopId, toShopId }) => (
                     <ChatPreview
                       key={id}
                       chatRoomId={id}
                       shopId={fromShopId === shopId ? toShopId : fromShopId}
+                      isActive={currentChatRoomId === id}
                     />
-                  )
-                })}
+                  )}
+                />
               </div>
             )}
           </div>
