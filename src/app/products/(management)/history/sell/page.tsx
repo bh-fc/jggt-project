@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import ProductsLayout from '../../_components/ProductsLayout'
 import Tab from '../_components/Tab'
 
 import SellProductList from './_components/SellProductList'
@@ -42,20 +41,18 @@ export default async function ProductsHistorySell() {
   ])
 
   return (
-    <ProductsLayout currentTab="history">
-      <Container>
-        <Tab currentTab="sell" />
-        <div className="flex text-center border-y border-black py-2">
-          <div className="w-28">사진</div>
-          <div className="flex-1">상품명</div>
-          <div className="w-28">가격</div>
-        </div>
-        <SellProductList
-          initialProducts={products}
-          count={count}
-          shopId={shopId}
-        />
-      </Container>
-    </ProductsLayout>
+    <Container>
+      <Tab currentTab="sell" />
+      <div className="flex text-center border-y border-black py-2">
+        <div className="w-28">사진</div>
+        <div className="flex-1">상품명</div>
+        <div className="w-28">가격</div>
+      </div>
+      <SellProductList
+        initialProducts={products}
+        count={count}
+        shopId={shopId}
+      />
+    </Container>
   )
 }

@@ -1,4 +1,7 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { ReactNode } from 'react'
 
 import Text from '@/components/common/Text'
@@ -7,10 +10,20 @@ import Wrapper from '@/components/layout/Wrapper'
 
 type Props = {
   children: ReactNode
-  currentTab?: 'new' | 'manage' | 'history'
 }
 
-export default function ProductsLayout({ children, currentTab }: Props) {
+type CurrentTab = 'new' | 'manage' | 'history'
+
+export default function ProductsManagementLayout({ children }: Props) {
+  const pathname = usePathname()
+  const currentTab: CurrentTab | undefined = pathname.includes('new')
+    ? 'new'
+    : pathname.includes('manage')
+      ? 'manage'
+      : pathname.includes('history')
+        ? 'history'
+        : undefined
+
   return (
     <Wrapper>
       <div className="border-b py-4">
