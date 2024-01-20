@@ -42,7 +42,9 @@ export default function Product({
         style={{ backgroundImage: `url(${imageUrl})` }}
       />
       <div className="h-20 flex flex-col px-3 justify-center">
-        <Text>{title}</Text>
+        <Text className="text-ellipsis overflow-hidden whitespace-nowrap block">
+          {title}
+        </Text>
         <div className="flex justify-between">
           <div>
             <Text weight="bold"> {price.toLocaleString()} </Text>
