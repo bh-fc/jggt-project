@@ -1,12 +1,14 @@
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/ko'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import ShopProfileImage from '@/components/common/ShopProfileImage'
 import Spinner from '@/components/common/Spinner'
 import Text from '@/components/common/Text'
+import MarkdownViewerSkeleton from '@/components/shared/MarkdownViewer/Skeleton'
 import { getProduct } from '@/repository/products/getProduct'
 import { getShop } from '@/repository/shops/getShop'
 import { Product, Shop } from '@/types'
@@ -19,6 +21,14 @@ type Props = {
 }
 
 dayjs.extend(relativeTime).locale('ko')
+
+const MarkdownViewer = dynamic(
+  () => import('@/components/shared/MarkdownViewer'),
+  {
+    ssr: false,
+    loading: () => <MarkdownViewerSkeleton />,
+  },
+)
 
 export default function ReviewItem({
   reviewerId,
@@ -71,7 +81,9 @@ export default function ReviewItem({
               </Text>
             </a>
           </Link>
-          <div>{contents}</div>
+          <div>
+            <MarkdownViewer value={contents} />
+          </div>
         </div>
       </div>
     </div>

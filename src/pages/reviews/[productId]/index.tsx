@@ -1,10 +1,12 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import dynamic from 'next/dynamic'
 import { useState } from 'react'
 
 import Button from '@/components/common/Button'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
+import MarkdownEditorSkeleton from '@/components/shared/MarkdownEditor/Skeleton'
 import { getProduct } from '@/repository/products/getProduct'
 import { getReviewByProductId } from '@/repository/reviews/getReviewByProductId'
 import { Product, Review } from '@/types'
@@ -24,6 +26,14 @@ export const getServerSideProps: GetServerSideProps<{
     props: { product, review },
   }
 }
+
+const MarkdownEditor = dynamic(
+  () => import('@/components/shared/MarkdownEditor'),
+  {
+    ssr: false,
+    loading: () => <MarkdownEditorSkeleton />,
+  },
+)
 
 export default function ReviewPage({
   product,
@@ -47,11 +57,10 @@ export default function ReviewPage({
           </Text>
         </div>
         <div>
-          <textarea
-            className="border p-2 w-full h-40 outline-none"
-            value={value}
+          <MarkdownEditor
+            initialValue={value}
             disabled={!!review}
-            onChange={(e) => setValue(e.target.value)}
+            handleOnChage={(value) => setValue(value)}
           />
           <div className="flex justify-end mt-2">
             <Button color="red" onClick={handleSubmit} disabled={!!review}>

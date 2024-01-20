@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic'
 import { useRef, useState } from 'react'
 
 import ProductsLayout from '../ProductsLayout'
@@ -6,6 +7,7 @@ import Button from '@/components/common/Button'
 import Input from '@/components/common/Input'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
+import MarkdownEditorSkeleton from '@/components/shared/MarkdownEditor/Skeleton'
 import { City, cities, getDistricts } from '@/utils/address'
 
 type Props = {
@@ -20,6 +22,14 @@ type Props = {
   description: string
   tags: string[]
 }
+
+const MarkdownEditor = dynamic(
+  () => import('@/components/shared/MarkdownEditor'),
+  {
+    ssr: false,
+    loading: () => <MarkdownEditorSkeleton />,
+  },
+)
 
 export default function ProductForm({
   id: defaultId,
@@ -36,6 +46,9 @@ export default function ProductForm({
   const tagInputRef = useRef<HTMLInputElement>(null)
   const [tags, setTags] = useState<string[]>(defaultTags || [])
   const [city, setCity] = useState<City | undefined>(defaultCity)
+  const [description, setDescription] = useState<string>(
+    defaultDescription || '',
+  )
 
   const uploadImage = (file: File) => {
     alert(file.name)
@@ -293,11 +306,11 @@ export default function ProductForm({
               </Text>
             </div>
             <div className="flex-1">
-              <textarea
-                name="description"
-                required
-                className="p-2 border w-full outline-none"
-                defaultValue={defaultDescription}
+              <MarkdownEditor
+                initialValue={description}
+                handleOnChage={(value) => {
+                  setDescription(value)
+                }}
               />
             </div>
           </div>

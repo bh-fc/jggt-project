@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import 'dayjs/locale/ko'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -15,6 +16,7 @@ import Shop from '@/components/common/Shop'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
+import MarkdownViewerSkeleton from '@/components/shared/MarkdownViewer/Skeleton'
 import { getIsFollowedByShopId } from '@/repository/followes/getIsFollowedByShopId'
 import { getIsLikedWithProductIdAndShopId } from '@/repository/likes/getIsLikedWithProductIdAndShopId'
 import { getMe } from '@/repository/me/getMe'
@@ -101,6 +103,14 @@ export const getServerSideProps: GetServerSideProps<{
 }
 
 dayjs.extend(relativeTime).locale('ko')
+
+const MarkdownViewer = dynamic(
+  () => import('@/components/shared/MarkdownViewer'),
+  {
+    ssr: false,
+    loading: () => <MarkdownViewerSkeleton />,
+  },
+)
 
 export default function ProductDetail({
   product,
@@ -232,7 +242,9 @@ export default function ProductDetail({
             <div className="border-b border-grey pb-3">
               <Text size="xl">상품 정보</Text>
             </div>
-            <div className="mt-5 mb-10">{product.description}</div>
+            <div className="mt-5 mb-10">
+              <MarkdownViewer value={product.description} />
+            </div>
             <div className="border-y py-4 flex gap-2">
               <div className="rounded bg-slate-200 px-3 py-1 text-sm">
                 {product.isUsed ? '중고상품' : '새 상품'}
@@ -352,7 +364,8 @@ export default function ProductDetail({
             )}
             <div>
               <div className="my-4 border-b pb-4">
-                <Text>상점후기</Text> <Text color="red">{reviewCount}</Text>
+                <Text>상점후기</Text>{' '}
+                <Text color="red">{reviewCount.toLocaleString()}</Text>
               </div>
               <div>
                 {reviews
