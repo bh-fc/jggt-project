@@ -30,12 +30,14 @@ export default function Header({ children }: Props) {
             </Link>
             <Search />
             <div className="flex gap-2">
-              <div className="flex items-center">
-                <span className="material-symbols-outlined">sell</span>
-                <Text weight="light" size="sm" className="mx-1">
-                  판매하기
-                </Text>
-              </div>
+              <Link href="/products/new" prefetch={false}>
+                <a className="flex items-center">
+                  <span className="material-symbols-outlined">sell</span>
+                  <Text weight="light" size="sm" className="mx-1">
+                    판매하기
+                  </Text>
+                </a>
+              </Link>
               |
               <Link href="/my-shop" prefetch={false}>
                 <a className="flex items-center">
@@ -46,12 +48,14 @@ export default function Header({ children }: Props) {
                 </a>
               </Link>
               |
-              <div className="flex items-center">
-                <span className="material-symbols-outlined">chat_bubble</span>
-                <Text weight="light" size="sm" className="mx-1">
-                  채팅
-                </Text>
-              </div>
+              <Link href="/messages" prefetch={false}>
+                <a className="flex items-center">
+                  <span className="material-symbols-outlined">chat_bubble</span>
+                  <Text weight="light" size="sm" className="mx-1">
+                    채팅
+                  </Text>
+                </a>
+              </Link>
             </div>
           </div>
         </Container>
