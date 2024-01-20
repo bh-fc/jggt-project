@@ -1,15 +1,18 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useEffect, useState } from 'react'
 
-import Shop from '@/components/common/Shop'
+import SearchShopItem from './_components/SearchShopItem'
+
+import Pagination from '@/components/common/Pagination'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
 import { getShopsByKeyword } from '@/repository/shops/getShopsByKeyword'
 import { getShopsByKeywordCount } from '@/repository/shops/getShopsByKeywordCount'
-import { Shop as TShop } from '@/types'
+import { Shop } from '@/types'
 
 export const getServerSideProps: GetServerSideProps<{
-  shops: TShop[]
+  shops: Shop[]
   query: string
   count: number
 }> = async (context) => {
@@ -30,10 +33,31 @@ export const getServerSideProps: GetServerSideProps<{
 }
 
 export default function SearchShop({
-  shops,
+  shops: initialShops,
   query,
   count,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [shops, setShops] = useState<Shop[]>(initialShops)
+
+  // 사용자에게 보이는 페이지는 1부터 시작
+  const [currentPage, setCurrentPage] = useState(1)
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [initialShops])
+
+  useEffect(() => {
+    ;(async () => {
+      const { data: shops } = await getShopsByKeyword({
+        query,
+        // 서버에서 처리되는 페이지는 0부터 시작
+        fromPage: currentPage - 1,
+        toPage: currentPage,
+      })
+      setShops(shops)
+    })()
+  }, [currentPage, query])
+
   return (
     <Wrapper>
       <Container>
@@ -48,17 +72,21 @@ export default function SearchShop({
             <Text>검색 결과가 없습니다.</Text>
           ) : (
             shops.map(({ id, name, imageUrl }) => (
-              <div key={id} className="border border-grey-300 p-5">
-                <Shop
-                  type="row"
-                  name={name}
-                  productCount={0}
-                  followerCount={0}
-                  profileImageUrl={imageUrl || undefined}
-                />
-              </div>
+              <SearchShopItem
+                key={id}
+                id={id}
+                name={name}
+                profileImageUrl={imageUrl || undefined}
+              />
             ))
           )}
+        </div>
+        <div className="my-6 flex justify-end">
+          <Pagination
+            currentPage={currentPage}
+            count={count}
+            handlePageChange={(pageIndex) => setCurrentPage(pageIndex)}
+          />
         </div>
       </Container>
     </Wrapper>

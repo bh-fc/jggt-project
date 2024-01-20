@@ -31,7 +31,10 @@ export default function ShopProfileImage({ imageUrl, className }: Props) {
   // 이미지가 있는 경우
   return (
     <div
-      className={classNames(className, 'rounded-full w-14 h-14 bg-cover')}
+      className={classNames(
+        className,
+        'rounded-full w-14 h-14 bg-cover bg-center',
+      )}
       style={{ backgroundImage: `url(${imageUrl})` }}
     />
   )
