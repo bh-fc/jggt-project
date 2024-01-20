@@ -7,18 +7,21 @@ import { useState } from 'react'
 import ProductImage from './_components/ProductImage'
 
 import Button from '@/components/common/Button'
+import Product from '@/components/common/Product'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
 import { getIsLikedWithProductIdAndShopId } from '@/repository/likes/getIsLikedWithProductIdAndShopId'
 import { getMe } from '@/repository/me/getMe'
 import { getProduct } from '@/repository/products/getProduct'
-import { Product } from '@/types'
+import { getProductsByTag } from '@/repository/products/getProductsByTag'
+import { Product as TProdct } from '@/types'
 
 export const getServerSideProps: GetServerSideProps<{
-  product: Product
+  product: TProdct
   myShopId: string | null
   isLiked: boolean
+  suggest: TProdct[]
 }> = async (context) => {
   const productId = context.query.productId as string
 
@@ -35,8 +38,13 @@ export const getServerSideProps: GetServerSideProps<{
         })
       : { data: false }
 
+  const productsByTagsResult = await Promise.all(
+    (product.tags || []).map((tag) => getProductsByTag(tag)),
+  )
+  const suggest = productsByTagsResult.map(({ data }) => data).flat()
+
   return {
-    props: { product, myShopId, isLiked },
+    props: { product, myShopId, isLiked, suggest },
   }
 }
 
@@ -45,6 +53,7 @@ dayjs.extend(relativeTime).locale('ko')
 export default function ProductDetail({
   product,
   myShopId,
+  suggest,
   isLiked: initialIsLiked,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [isLiked, setIsLiked] = useState(initialIsLiked)
@@ -162,7 +171,7 @@ export default function ProductDetail({
                 {product.isChangable ? '교환가능' : '교환불가'}
               </div>
             </div>
-            <div className="flex py-4 border-b">
+            <div className="flex py-4 border-b mb-10">
               <div className="flex-1 flex flex-col items-center gap-2">
                 <Text size="lg" color="grey">
                   거래지역
@@ -189,6 +198,27 @@ export default function ProductDetail({
                 </div>
               </div>
             </div>
+            {suggest.length === 0 ? null : (
+              <div>
+                <div>
+                  <Text size="xl"> 비슷한 상품 </Text>
+                </div>
+                <div className="my-5 flex gap-3">
+                  {suggest
+                    .slice(0, 3)
+                    .map(({ id, title, price, createdAt, imageUrls }) => (
+                      <div key={id}>
+                        <Product
+                          title={title}
+                          price={price}
+                          createdAt={createdAt}
+                          imageUrl={imageUrls[0]}
+                        />
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
           <div className="w-2/6"> 상점 정보 </div>
         </div>
