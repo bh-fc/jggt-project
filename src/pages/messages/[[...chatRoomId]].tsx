@@ -1,6 +1,7 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
 
+import ChatMessages from './_components/ChatMessages'
 import ChatPreview from './_components/ChatPreview'
 
 import Text from '@/components/common/Text'
@@ -35,6 +36,7 @@ export default function Messages({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter()
   const currentChatRoomId = router.query.chatRoomId?.[0]
+  const currentChatRoom = chatRooms.find(({ id }) => id === currentChatRoomId)
 
   return (
     <Wrapper className="bg-gray-100">
@@ -68,17 +70,27 @@ export default function Messages({
             )}
           </div>
           <div
-            className="w-1/2 border-l border-grey pl-2"
+            className="w-1/2 border-l border-grey px-2"
             style={{
               minHeight: 'calc(100vh - 28px - 108px - 65px)',
               maxHeight: 'calc(100vh - 28px - 108px - 65px)',
             }}
           >
-            {!currentChatRoomId ? (
+            {!currentChatRoom ? (
               <div className="flex justify-center items-center h-full">
                 <Text color="grey">대화를 선택해주세요</Text>
               </div>
-            ) : null}
+            ) : (
+              <ChatMessages
+                chatRoomId={currentChatRoom.id}
+                myShopId={shopId}
+                counterShopId={
+                  currentChatRoom.fromShopId === shopId
+                    ? currentChatRoom.toShopId
+                    : currentChatRoom.fromShopId
+                }
+              />
+            )}
           </div>
         </div>
       </Container>

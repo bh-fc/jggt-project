@@ -2,10 +2,12 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import ShopProfileImage from '@/components/common/ShopProfileImage'
+import Spinner from '@/components/common/Spinner'
 import Text from '@/components/common/Text'
 import { getChatMessages } from '@/repository/chatMessages/getChatMessages'
 import { getShop } from '@/repository/shops/getShop'
 import { ChatMessage, Shop } from '@/types'
+import { checkIsImage } from '@/utils/image'
 
 type Props = {
   chatRoomId: string
@@ -37,12 +39,16 @@ export default function ChatPreview({ chatRoomId, shopId }: Props) {
   }, [chatRoomId, shopId])
 
   if (!shop || !lastMessage) {
-    return null
+    return (
+      <div className="flex justify-center items-center h-20 shrink-0">
+        <Spinner />
+      </div>
+    )
   }
 
   return (
-    <Link href={`/messages/${chatRoomId}`} prefetch={false}>
-      <a className="flex py-3 hover:bg-gray-100">
+    <Link href={`/messages/${chatRoomId}`} prefetch={false} shallow>
+      <a className="flex py-3 hover:bg-gray-100 h-20 shrink-0">
         <div className="mx-3">
           <ShopProfileImage imageUrl={shop.imageUrl || undefined} />
         </div>
@@ -52,7 +58,9 @@ export default function ChatPreview({ chatRoomId, shopId }: Props) {
           </Text>
           <div className="truncate">
             <Text size="sm" color="grey">
-              {lastMessage.message}
+              {checkIsImage(lastMessage.message)
+                ? '[이미지]'
+                : lastMessage.message}
             </Text>
           </div>
         </div>

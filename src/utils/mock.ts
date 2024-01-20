@@ -98,7 +98,10 @@ export function getMockChatMessageData(defaultValue?: Partial<ChatMessage>) {
     id: defaultValue?.id ?? faker.string.uuid(),
     createdAt: defaultValue?.createdAt ?? faker.date.past().toString(),
     chatRoom: defaultValue?.chatRoom ?? faker.string.uuid(),
-    message: defaultValue?.message ?? faker.lorem.sentences(3, '\n'),
+    message:
+      defaultValue?.message ?? faker.datatype.boolean()
+        ? faker.lorem.sentences(3, '\n')
+        : faker.image.dataUri(),
     createdBy: defaultValue?.createdBy ?? faker.string.uuid(),
   }
   return data
