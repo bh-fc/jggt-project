@@ -37,12 +37,14 @@ export default function Header({ children }: Props) {
                 </Text>
               </div>
               |
-              <div className="flex items-center">
-                <span className="material-symbols-outlined">storefront</span>
-                <Text weight="light" size="sm" className="mx-1">
-                  내 상점
-                </Text>
-              </div>
+              <Link href="/my-shop" prefetch={false}>
+                <a className="flex items-center">
+                  <span className="material-symbols-outlined">storefront</span>
+                  <Text weight="light" size="sm" className="mx-1">
+                    내 상점
+                  </Text>
+                </a>
+              </Link>
               |
               <div className="flex items-center">
                 <span className="material-symbols-outlined">chat_bubble</span>

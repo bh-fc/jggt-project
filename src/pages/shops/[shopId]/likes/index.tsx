@@ -5,6 +5,7 @@ import ShopLayout from '../../_components/ShopLayout'
 import LikeList from './_components/LikeList'
 
 import Text from '@/components/common/Text'
+import { getMe } from '@/repository/me/getMe'
 import { getShop } from '@/repository/shops/getShop'
 import { getShopFollowerCount } from '@/repository/shops/getShopFollowerCount'
 import { getShopFollowingCount } from '@/repository/shops/getShopFollowingCount'
@@ -15,6 +16,7 @@ import { getShopReviewCount } from '@/repository/shops/getShopReviewCount'
 import { Like, Shop } from '@/types'
 
 export const getServerSideProps: GetServerSideProps<{
+  isMyShop: boolean
   shop: Shop
   productCount: number
   reviewCount: number
@@ -26,6 +28,9 @@ export const getServerSideProps: GetServerSideProps<{
   const shopId = context.query.shopId as string
 
   const [
+    {
+      data: { shopId: myShopId },
+    },
     { data: shop },
     { data: productCount },
     { data: reviewCount },
@@ -34,6 +39,7 @@ export const getServerSideProps: GetServerSideProps<{
     { data: followerCount },
     { data: likes },
   ] = await Promise.all([
+    getMe(),
     getShop(shopId),
     getShopProductCount(shopId),
     getShopReviewCount(shopId),
@@ -45,6 +51,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   return {
     props: {
+      isMyShop: myShopId === shopId,
       shop,
       productCount,
       reviewCount,
@@ -57,6 +64,7 @@ export const getServerSideProps: GetServerSideProps<{
 }
 
 export default function ShopsLikes({
+  isMyShop,
   shop,
   productCount,
   reviewCount,
@@ -67,6 +75,7 @@ export default function ShopsLikes({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <ShopLayout
+      isMyShop={isMyShop}
       shop={shop}
       productCount={productCount}
       reviewCount={reviewCount}

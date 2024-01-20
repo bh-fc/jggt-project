@@ -2,20 +2,24 @@ import classNames from 'classnames'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import Link from 'next/link'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import 'dayjs/locale/ko'
 
+import Button from '@/components/common/Button'
+import Input from '@/components/common/Input'
 import ShopProfileImage from '@/components/common/ShopProfileImage'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
 import { Shop } from '@/types'
+import { timeout } from '@/utils/mock'
 
 dayjs.extend(relativeTime).locale('ko')
 
 type Tabs = 'products' | 'reviews' | 'likes' | 'following' | 'follower'
 
 type Props = {
+  isMyShop: boolean
   shop: Shop
   productCount: number
   reviewCount: number
@@ -26,7 +30,10 @@ type Props = {
   children: ReactNode
 }
 
+type EDIT_STUATUS = 'IDLE' | 'EDIT' | 'LOADING'
+
 export default function ShopLayout({
+  isMyShop,
   shop,
   productCount,
   reviewCount,
@@ -36,17 +43,93 @@ export default function ShopLayout({
   currentTab,
   children,
 }: Props) {
+  const [shopNameStatus, setShopNameState] = useState<EDIT_STUATUS>('IDLE')
+  const [shopDescriptionStatus, setShopDescriptionState] =
+    useState<EDIT_STUATUS>('IDLE')
+
+  const handleSubmitShopName = async () => {
+    setShopNameState('LOADING')
+    await timeout(2000)
+    setShopNameState('IDLE')
+  }
+
+  const handleSubmitShopDescription = async () => {
+    setShopDescriptionState('LOADING')
+    await timeout(2000)
+    setShopDescriptionState('IDLE')
+  }
+
+  const handleSubmitShopProfileImage = async () => {
+    alert('Image!')
+  }
+
   return (
     <Wrapper>
       <Container>
         <div className="my-10">
           <div className="border border-gray-300 flex h-64">
-            <div className="bg-gray-300 h-full w-60 flex flex-col justify-center items-center">
-              <ShopProfileImage imageUrl={shop.imageUrl || undefined} />
+            <div className="bg-gray-300 h-full w-60 flex flex-col justify-center items-center gap-2">
+              {!isMyShop ? (
+                <ShopProfileImage imageUrl={shop.imageUrl || undefined} />
+              ) : (
+                <>
+                  <form onChange={handleSubmitShopProfileImage}>
+                    <label htmlFor="image" className="cursor-pointer">
+                      <ShopProfileImage imageUrl={shop.imageUrl || undefined} />
+                    </label>
+                    <input
+                      type="file"
+                      name="image"
+                      id="image"
+                      hidden
+                      accept=".jpg, .jpeg, .png"
+                    />
+                  </form>
+                  <Link href="/">
+                    <a className="border border-white text-white px-3 py-2 my-2">
+                      내 상점 관리
+                    </a>
+                  </Link>
+                </>
+              )}
             </div>
             <div className="flex flex-col flex-1 gap-2 py-2">
-              <div className="pl-4">
-                <Text size="lg">{shop.name}</Text>
+              <div className="pl-4 flex items-center">
+                {isMyShop ? (
+                  shopNameStatus === 'IDLE' ? (
+                    <>
+                      <Text size="lg">{shop.name}</Text>
+                      <Button
+                        size="xs"
+                        className="ml-2"
+                        outline
+                        onClick={() => setShopNameState('EDIT')}
+                      >
+                        상점명 수정
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Input
+                        className="text-xs w-60"
+                        placeholder="새 닉네임을 입력하세요 (2자 이상)"
+                        disabled={shopNameStatus === 'LOADING'}
+                        required
+                        autoComplete="off"
+                        minLength={2}
+                      />
+                      <Button
+                        className="text-sm w-20"
+                        isLoading={shopNameStatus === 'LOADING'}
+                        onClick={() => handleSubmitShopName()}
+                      >
+                        확인
+                      </Button>
+                    </>
+                  )
+                ) : (
+                  <Text size="lg">{shop.name}</Text>
+                )}
               </div>
               <div className="pl-4 flex gap-2 border-y border-slate-200 py-2">
                 <div className="flex gap-2">
@@ -62,10 +145,47 @@ export default function ShopLayout({
                   <Text size="sm">{productCount.toLocaleString()}개</Text>
                 </div>
               </div>
-              <div className="flex-1 px-4 overflow-hidden">
-                <Text size="sm" className="block overflow-scroll h-full">
-                  {shop.introduce}
-                </Text>
+              <div className="flex flex-col flex-1 px-4 overflow-hidden">
+                {isMyShop ? (
+                  shopDescriptionStatus === 'IDLE' ? (
+                    <>
+                      <Text size="sm" className="block overflow-scroll h-full">
+                        {shop.introduce}
+                      </Text>
+                      <Button
+                        size="xs"
+                        outline
+                        className="w-20"
+                        onClick={() => setShopDescriptionState('EDIT')}
+                      >
+                        소개글 수정
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <textarea
+                        className="flex-1 p-1 mb-2 text-sm border outline-none disabled:opacity-50"
+                        placeholder="소개글을 입력해주세요"
+                        disabled={shopDescriptionStatus === 'LOADING'}
+                      >
+                        {shop.introduce}
+                      </textarea>
+                      <Button
+                        size="xs"
+                        outline
+                        className="w-20"
+                        isLoading={shopDescriptionStatus === 'LOADING'}
+                        onClick={() => handleSubmitShopDescription()}
+                      >
+                        확인
+                      </Button>
+                    </>
+                  )
+                ) : (
+                  <Text size="sm" className="block overflow-scroll h-full">
+                    {shop.introduce}
+                  </Text>
+                )}
               </div>
             </div>
           </div>
