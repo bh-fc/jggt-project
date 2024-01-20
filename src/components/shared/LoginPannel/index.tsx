@@ -10,7 +10,10 @@ export default function LoginPannel() {
   const [type, setType] = useState<undefined | 'login' | 'signup'>()
 
   return (
-    <div className="bg-slate-50 flex flex-col justify-center items-center p-10 rounded w-96 gap-2">
+    <div
+      className="bg-slate-50 flex flex-col justify-center items-center p-10 rounded w-96 gap-2"
+      onClick={(e) => e.stopPropagation()}
+    >
       <Text size="lg"> 중고장터 시작하기 </Text>
       <Text weight="light"> 간편하게 가입하고 상품을 확인하세요 </Text>
       {type === 'login' ? (

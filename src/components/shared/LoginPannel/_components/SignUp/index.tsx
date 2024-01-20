@@ -13,7 +13,7 @@ export default function SignUp({ handleSetType }: Props) {
 
       <div className="flex flex-col gap-2 w-full">
         <Button onClick={() => handleSetType('login')}>로그인</Button>
-        <Button>회원가입 하기</Button>
+        <Button outline>회원가입</Button>
       </div>
     </form>
   )
