@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import Text from '@/components/common/Text'
 import {
+  RECENT_KEYWORDS_KEY,
   addRecentKeyword,
   clearRecentKeyword,
   getRecentKeywords,
@@ -15,10 +16,21 @@ type Props = {
 export default function Recent({ handleClose }: Props) {
   const [recents, setRecents] = useState<string[]>([])
 
-  useEffect(() => {
+  const handleSetRecents = useCallback(() => {
     const recents = getRecentKeywords()
     setRecents(recents)
   }, [])
+
+  useEffect(() => {
+    handleSetRecents()
+  }, [handleSetRecents])
+
+  useEffect(() => {
+    const eventHandler = () => handleSetRecents()
+    window.addEventListener(RECENT_KEYWORDS_KEY, eventHandler)
+
+    return () => window.removeEventListener(RECENT_KEYWORDS_KEY, eventHandler)
+  }, [handleSetRecents])
 
   return (
     <div className="flex flex-col h-full">

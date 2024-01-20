@@ -6,16 +6,20 @@ import Spinner from '@/components/common/Spinner'
 import Text from '@/components/common/Text'
 import { getProduct } from '@/repository/products/getProduct'
 import { Product } from '@/types'
-import { getRecentItemIds } from '@/utils/localstorage'
+import { RECENT_ITEM_IDS_KEY, getRecentItemIds } from '@/utils/localstorage'
 
 export default function Recent() {
   const [isLoading, setIsLoading] = useState(false)
   const [recentProducts, setRecentProducts] = useState<Product[]>([])
   const [currentPage, setCurrentPage] = useState(0)
   const totalPage = useMemo(
-    () => Math.floor(recentProducts.length / 3),
+    () => Math.max(Math.ceil(recentProducts.length / 3) - 1, 0),
     [recentProducts],
   )
+
+  useEffect(() => {
+    setCurrentPage((_curPage) => Math.min(_curPage, totalPage))
+  }, [totalPage])
 
   const handleUpdateRecentProducts = useCallback(async () => {
     try {
@@ -33,6 +37,12 @@ export default function Recent() {
 
   useEffect(() => {
     handleUpdateRecentProducts()
+  }, [handleUpdateRecentProducts])
+
+  useEffect(() => {
+    const eventHandler = () => handleUpdateRecentProducts()
+    window.addEventListener(RECENT_ITEM_IDS_KEY, eventHandler)
+    return () => window.removeEventListener(RECENT_ITEM_IDS_KEY, eventHandler)
   }, [handleUpdateRecentProducts])
 
   return (

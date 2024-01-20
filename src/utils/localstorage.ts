@@ -1,7 +1,9 @@
-const RECENT_ITEM_IDS_KEY = 'recent_item_ids_[]'
-const RECENT_KEYWORDS_KEY = 'recent_keywords_[]'
+export const RECENT_ITEM_IDS_KEY = 'recent_item_ids_[]'
+export const RECENT_KEYWORDS_KEY = 'recent_keywords_[]'
 
-const getArray = (key: string) => {
+type ArrayKeys = typeof RECENT_ITEM_IDS_KEY | typeof RECENT_KEYWORDS_KEY
+
+const getArray = (key: ArrayKeys) => {
   try {
     const items = localStorage.getItem(key)
     if (items) {
@@ -13,8 +15,9 @@ const getArray = (key: string) => {
   }
 }
 
-const setArray = (key: string, value: unknown) => {
+const setArray = (key: ArrayKeys, value: unknown) => {
   localStorage.setItem(key, JSON.stringify(value))
+  window.dispatchEvent(new Event(key))
 }
 
 export const getRecentKeywords = (): string[] => getArray(RECENT_KEYWORDS_KEY)
@@ -32,7 +35,7 @@ export const addRecentKeyword = (keyword: string) => {
 }
 
 export const clearRecentKeyword = () => {
-  localStorage.removeItem(RECENT_KEYWORDS_KEY)
+  setArray(RECENT_KEYWORDS_KEY, [])
 }
 
 export const getRecentItemIds = (): string[] => getArray(RECENT_ITEM_IDS_KEY)

@@ -31,7 +31,10 @@ export default function RecentItem({ id, title, price, imageUrl }: Props) {
                 <div
                   className="absolute bg-black flex justify-center items-center text-white cursor-pointer"
                   style={{ width: 20, height: 20, left: -20 }}
-                  onClick={() => removeRecentItemId(id)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    removeRecentItemId(id)
+                  }}
                 >
                   <span
                     className="material-symbols-outlined"
