@@ -1,7 +1,9 @@
+import JggtLayout from '@/components/layout/JggtLayout'
+
 export default function Home() {
   return (
-    <div className="p-10">
-      <div className="w-12 h-12 bg-red-900 rounded-xl" />
-    </div>
+    <JggtLayout>
+      <div className="bg-slate-300" style={{ height: '150vh' }} />
+    </JggtLayout>
   )
 }
