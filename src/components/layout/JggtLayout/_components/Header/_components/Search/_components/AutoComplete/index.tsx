@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Text from '@/components/common/Text'
 import { getProductsByKeyword } from '@/repository/products/getProductsByKeyword'
 import { addRecentKeyword } from '@/utils/localstorage'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   query: string
@@ -23,7 +24,7 @@ export default function AutoComplete({ query, handleClose }: Props) {
           setKeywords([])
           return
         }
-        const { data } = await getProductsByKeyword({
+        const { data } = await getProductsByKeyword(supabase, {
           query,
           fromPage: 0,
           toPage: 2,

@@ -6,6 +6,7 @@ import Product from '@/components/common/Product'
 import Spinner from '@/components/common/Spinner'
 import { getProducts } from '@/repository/products/getProducts'
 import { Product as TProduct } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   initialProducts: TProduct[]
@@ -26,7 +27,7 @@ export default function ProductList({ initialProducts }: Props) {
   }) => {
     try {
       setIsLoading(true)
-      const { data } = await getProducts({ fromPage, toPage })
+      const { data } = await getProducts(supabase, { fromPage, toPage })
       setProducts((prevProducts) => [...prevProducts, ...data])
 
       if (data.length === 0) {

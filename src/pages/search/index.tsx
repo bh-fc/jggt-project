@@ -10,12 +10,15 @@ import Wrapper from '@/components/layout/Wrapper'
 import { getProductsByKeyword } from '@/repository/products/getProductsByKeyword'
 import { getProductsByKeywordCount } from '@/repository/products/getProductsByKeywordCount'
 import { Product as TProduct } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
+import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
 export const getServerSideProps: GetServerSideProps<{
   products: TProduct[]
   query: string
   count: number
 }> = async (context) => {
+  const supabase = getServerSupabase(context)
   const originalQuery = context.query.query as string | undefined
   if (!originalQuery) {
     throw new Error('검색어가 없습니다')
@@ -24,12 +27,12 @@ export const getServerSideProps: GetServerSideProps<{
   const query = decodeURIComponent(originalQuery)
 
   const [{ data: products }, { data: count }] = await Promise.all([
-    getProductsByKeyword({
+    getProductsByKeyword(supabase, {
       query,
       fromPage: 0,
       toPage: 1,
     }),
-    getProductsByKeywordCount(query),
+    getProductsByKeywordCount(supabase, query),
   ])
 
   return { props: { products, query, count } }
@@ -50,7 +53,7 @@ export default function Search({
 
   useEffect(() => {
     ;(async () => {
-      const { data: products } = await getProductsByKeyword({
+      const { data: products } = await getProductsByKeyword(supabase, {
         query,
         // 서버에서 처리되는 페이지는 0부터 시작
         fromPage: currentPage - 1,
