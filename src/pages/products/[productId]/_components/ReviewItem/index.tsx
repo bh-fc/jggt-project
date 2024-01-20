@@ -10,6 +10,7 @@ import Text from '@/components/common/Text'
 import MarkdownViewerSkeleton from '@/components/shared/MarkdownViewer/Skeleton'
 import { getShop } from '@/repository/shops/getShop'
 import { Shop } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   contents: string
@@ -32,7 +33,7 @@ export default function ReviewItem({ contents, createdAt, createdBy }: Props) {
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await getShop(createdBy)
+      const { data } = await getShop(supabase, createdBy)
       setReviewer(data)
     })()
   }, [createdBy])

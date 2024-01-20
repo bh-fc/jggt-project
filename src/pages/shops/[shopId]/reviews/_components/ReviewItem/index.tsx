@@ -12,6 +12,7 @@ import MarkdownViewerSkeleton from '@/components/shared/MarkdownViewer/Skeleton'
 import { getProduct } from '@/repository/products/getProduct'
 import { getShop } from '@/repository/shops/getShop'
 import { Product, Shop } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   reviewerId: string
@@ -41,7 +42,7 @@ export default function ReviewItem({
   useEffect(() => {
     ;(async () => {
       const [{ data: reviewer }, { data: product }] = await Promise.all([
-        getShop(reviewerId),
+        getShop(supabase, reviewerId),
         getProduct(productId),
       ])
 

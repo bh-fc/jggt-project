@@ -12,6 +12,7 @@ import Spinner from '@/components/common/Spinner'
 import Text from '@/components/common/Text'
 import { getShop } from '@/repository/shops/getShop'
 import { Shop } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   chatRoomId: string
@@ -29,7 +30,7 @@ export default function ChatMessages({
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await getShop(counterShopId)
+      const { data } = await getShop(supabase, counterShopId)
       setCounterShop(data)
     })()
   }, [counterShopId])

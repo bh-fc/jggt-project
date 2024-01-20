@@ -9,6 +9,7 @@ import { getShopFollowerCount } from '@/repository/shops/getShopFollowerCount'
 import { getShopProductCount } from '@/repository/shops/getShopProductCount'
 import { getShopProducts } from '@/repository/shops/getShopProducts'
 import { Product, Shop as TShop } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   shopId: string
@@ -31,7 +32,7 @@ export default function FollowerItem({ shopId }: Props) {
         { data: productCount },
         { data: followerCount },
       ] = await Promise.all([
-        getShop(shopId),
+        getShop(supabase, shopId),
         getShopProducts({ shopId, fromPage: 0, toPage: 1 }),
         getShopProductCount(shopId),
         getShopFollowerCount(shopId),

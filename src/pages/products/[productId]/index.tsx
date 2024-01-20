@@ -73,7 +73,7 @@ export const getServerSideProps: GetServerSideProps<{
         })
       : { data: false },
     Promise.all((product.tags || []).map((tag) => getProductsByTag(tag))),
-    getShop(product.createdBy),
+    getShop(supabase, product.createdBy),
     getShopProductCount(product.createdBy),
     getShopFollowerCount(product.createdBy),
     myShopId !== null

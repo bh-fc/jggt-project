@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<{
     { data: follower },
   ] = await Promise.all([
     getMe(supabase),
-    getShop(shopId),
+    getShop(supabase, shopId),
     getShopProductCount(shopId),
     getShopReviewCount(shopId),
     getShopLikeCount(shopId),

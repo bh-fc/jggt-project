@@ -9,6 +9,7 @@ import { getChatMessages } from '@/repository/chatMessages/getChatMessages'
 import { getShop } from '@/repository/shops/getShop'
 import { ChatMessage, Shop } from '@/types'
 import { checkIsImage } from '@/utils/image'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   chatRoomId: string
@@ -28,7 +29,7 @@ export default function ChatPreview({ chatRoomId, shopId, isActive }: Props) {
           data: [lastMessage],
         },
       ] = await Promise.all([
-        getShop(shopId),
+        getShop(supabase, shopId),
         getChatMessages({
           chatRoomId,
           fromIndex: 0,
