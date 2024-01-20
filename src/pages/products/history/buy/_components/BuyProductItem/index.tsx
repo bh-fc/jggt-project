@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Button from '@/components/common/Button'
 import Text from '@/components/common/Text'
 import { getReviewByProductId } from '@/repository/reviews/getReviewByProductId'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   id: string
@@ -17,7 +18,7 @@ export default function BuyProductItem({ id, title, price, imageUrl }: Props) {
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await getReviewByProductId(id)
+      const { data } = await getReviewByProductId(supabase, id)
       setIsReviewPosted(!!data)
     })()
   }, [id])

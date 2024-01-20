@@ -9,9 +9,11 @@ import Wrapper from '@/components/layout/Wrapper'
 import MarkdownEditorSkeleton from '@/components/shared/MarkdownEditor/Skeleton'
 import { getMe } from '@/repository/me/getMe'
 import { getProduct } from '@/repository/products/getProduct'
+import { createReview } from '@/repository/reviews/createReview'
 import { getReviewByProductId } from '@/repository/reviews/getReviewByProductId'
 import { Product, Review } from '@/types'
 import { AuthError } from '@/utils/error'
+import supabase from '@/utils/supabase/browserSupabase'
 import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
 export const getServerSideProps: GetServerSideProps<{
@@ -33,7 +35,7 @@ export const getServerSideProps: GetServerSideProps<{
 
     const [{ data: product }, { data: review }] = await Promise.all([
       getProduct(supabase, productId),
-      getReviewByProductId(productId),
+      getReviewByProductId(supabase, productId),
     ])
 
     return {
@@ -64,10 +66,22 @@ export default function ReviewPage({
   product,
   review,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [value, setValue] = useState<string>(review?.contents || '')
 
-  const handleSubmit = () => {
-    alert(value)
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true)
+      await createReview(supabase, {
+        productId: product.id,
+        contents: value,
+      })
+      location.reload()
+    } catch (e) {
+      alert('리뷰 작성을 실패했습니다.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -88,7 +102,12 @@ export default function ReviewPage({
             handleOnChage={(value) => setValue(value)}
           />
           <div className="flex justify-end mt-2">
-            <Button color="red" onClick={handleSubmit} disabled={!!review}>
+            <Button
+              color="red"
+              onClick={handleSubmit}
+              disabled={!!review}
+              isLoading={isLoading}
+            >
               작성하기
             </Button>
           </div>
