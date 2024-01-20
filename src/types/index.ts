@@ -28,3 +28,10 @@ export type Review = {
   createdBy: string
   createdAt: string
 }
+
+export type Like = {
+  id: string
+  productId: string
+  createdBy: string
+  createdAt: string
+}

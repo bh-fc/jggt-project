@@ -1,6 +1,6 @@
 import { fakerKO as faker } from '@faker-js/faker'
 
-import { Product, Review, Shop } from '@/types'
+import { Like, Product, Review, Shop } from '@/types'
 
 export function getMockProductData(defaultValue?: Partial<Product>) {
   const data: Product = {
@@ -49,6 +49,16 @@ export function getMockReviewData(defaultValue?: Partial<Review>) {
     id: defaultValue?.id ?? faker.string.uuid(),
     productId: defaultValue?.productId ?? faker.string.uuid(),
     contents: defaultValue?.contents ?? faker.lorem.sentences(3, '\n'),
+    createdBy: defaultValue?.createdBy ?? faker.string.uuid(),
+    createdAt: defaultValue?.createdAt ?? faker.date.past().toString(),
+  }
+  return data
+}
+
+export function getMockLikeData(defaultValue?: Partial<Like>) {
+  const data: Like = {
+    id: defaultValue?.id ?? faker.string.uuid(),
+    productId: defaultValue?.productId ?? faker.string.uuid(),
     createdBy: defaultValue?.createdBy ?? faker.string.uuid(),
     createdAt: defaultValue?.createdAt ?? faker.date.past().toString(),
   }

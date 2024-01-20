@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import Spinner from '@/components/common/Spinner'
@@ -6,6 +7,7 @@ import { getMe } from '@/repository/me/getMe'
 import { getShopLikeCount } from '@/repository/shops/getShopLikeCount'
 
 export default function Likes() {
+  const [shopId, setShopId] = useState<string>()
   const [likeCount, setLikeCount] = useState<number>()
 
   useEffect(() => {
@@ -21,6 +23,7 @@ export default function Likes() {
 
       const { data: likeCount } = await getShopLikeCount(shopId)
       setLikeCount(likeCount)
+      setShopId(shopId)
     })()
   }, [])
 
@@ -32,15 +35,23 @@ export default function Likes() {
           <Spinner />
         </div>
       ) : (
-        <Text size="xs" color="grey" className="flex gap-1 items-center mt-1">
-          <span
-            className="material-symbols-outlined"
-            style={{ fontSize: '0.725rem' }}
-          >
-            favorite
-          </span>
-          {likeCount}
-        </Text>
+        <Link href={!shopId ? '#' : `/shops/${shopId}/likes`}>
+          <a>
+            <Text
+              size="xs"
+              color="grey"
+              className="flex gap-1 items-center mt-1"
+            >
+              <span
+                className="material-symbols-outlined"
+                style={{ fontSize: '0.725rem' }}
+              >
+                favorite
+              </span>
+              {likeCount}
+            </Text>
+          </a>
+        </Link>
       )}
     </div>
   )
