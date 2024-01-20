@@ -1,3 +1,4 @@
+import { Black_Han_Sans } from 'next/font/google'
 import Link from 'next/link'
 import { ReactNode } from 'react'
 
@@ -9,6 +10,12 @@ import Wrapper from '@/components/layout/Wrapper'
 
 type Props = { children: ReactNode }
 
+const blackHanSans = Black_Han_Sans({
+  weight: ['400'],
+  display: 'swap',
+  subsets: ['latin'],
+})
+
 export default function Header({ children }: Props) {
   return (
     <div className="sticky top-0 z-10 bg-white border-b">
@@ -16,10 +23,7 @@ export default function Header({ children }: Props) {
         <Container>
           <div className="flex justify-between items-center py-8 gap-2">
             <Link href="/" prefetch={false}>
-              <Text
-                size="4xl"
-                style={{ fontFamily: `'Black Han Sans', sans-serif` }}
-              >
+              <Text size="4xl" className={blackHanSans.className}>
                 🗃 중고장터
               </Text>
             </Link>

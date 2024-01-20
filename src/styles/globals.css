@@ -2,10 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  font-family: 'Noto Sans KR', sans-serif;
-}
-
 .tui--large .toastui-editor-contents {
   font-size: 1rem !important;
+  font-family: inherit !important;
+}
+
+.material-symbols-outlined {
+  font-family: var(--material-symbols-outlined);
 }
