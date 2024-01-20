@@ -1,6 +1,6 @@
 import { fakerKO as faker } from '@faker-js/faker'
 
-import { Like, Product, Review, Shop } from '@/types'
+import { Follow, Like, Product, Review, Shop } from '@/types'
 
 export function getMockProductData(defaultValue?: Partial<Product>) {
   const data: Product = {
@@ -59,6 +59,16 @@ export function getMockLikeData(defaultValue?: Partial<Like>) {
   const data: Like = {
     id: defaultValue?.id ?? faker.string.uuid(),
     productId: defaultValue?.productId ?? faker.string.uuid(),
+    createdBy: defaultValue?.createdBy ?? faker.string.uuid(),
+    createdAt: defaultValue?.createdAt ?? faker.date.past().toString(),
+  }
+  return data
+}
+
+export function getMockFollowData(defaultValue?: Partial<Follow>) {
+  const data: Follow = {
+    id: defaultValue?.id ?? faker.string.uuid(),
+    followingShopId: defaultValue?.followingShopId ?? faker.string.uuid(),
     createdBy: defaultValue?.createdBy ?? faker.string.uuid(),
     createdAt: defaultValue?.createdAt ?? faker.date.past().toString(),
   }
