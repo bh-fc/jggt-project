@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 
+import Footer from './_components/Footer'
 import Header from './_components/Header'
 import UserInfo from './_components/UserInfo'
 
@@ -12,7 +13,14 @@ export default function JggtLayout({ children }: Props) {
     <div style={{ minWidth: 1000 }}>
       <UserInfo />
       <Header />
-      {children}
+      <main
+        style={{
+          minHeight: 'calc(100vh - 28px - 108px - 65px)',
+        }}
+      >
+        {children}
+      </main>
+      <Footer />
     </div>
   )
 }
