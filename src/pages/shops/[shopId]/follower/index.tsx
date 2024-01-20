@@ -2,12 +2,12 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 import ShopLayout from '../../_components/ShopLayout'
 
-import FollowingList from './_components/FollowingList'
+import FollowerList from './_components/FollowerList'
 
 import Text from '@/components/common/Text'
 import { getShop } from '@/repository/shops/getShop'
+import { getShopFollower } from '@/repository/shops/getShopFollower'
 import { getShopFollowerCount } from '@/repository/shops/getShopFollowerCount'
-import { getShopFollowing } from '@/repository/shops/getShopFollowing'
 import { getShopFollowingCount } from '@/repository/shops/getShopFollowingCount'
 import { getShopLikeCount } from '@/repository/shops/getShopLikeCount'
 import { getShopProductCount } from '@/repository/shops/getShopProductCount'
@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps<{
   likeCount: number
   followingCount: number
   followerCount: number
-  following: Follow[]
+  follower: Follow[]
 }> = async (context) => {
   const shopId = context.query.shopId as string
 
@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps<{
     { data: likeCount },
     { data: followingCount },
     { data: followerCount },
-    { data: following },
+    { data: follower },
   ] = await Promise.all([
     getShop(shopId),
     getShopProductCount(shopId),
@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps<{
     getShopLikeCount(shopId),
     getShopFollowingCount(shopId),
     getShopFollowerCount(shopId),
-    getShopFollowing({ shopId, fromPage: 0, toPage: 1 }),
+    getShopFollower({ shopId, fromPage: 0, toPage: 1 }),
   ])
 
   return {
@@ -51,19 +51,19 @@ export const getServerSideProps: GetServerSideProps<{
       likeCount,
       followingCount,
       followerCount,
-      following,
+      follower,
     },
   }
 }
 
-export default function Following({
+export default function Follower({
   shop,
   productCount,
   reviewCount,
   likeCount,
   followingCount,
   followerCount,
-  following: initialFollowing,
+  follower: initialFollower,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <ShopLayout
@@ -73,17 +73,17 @@ export default function Following({
       likeCount={likeCount}
       followingCount={followingCount}
       followerCount={followerCount}
-      currentTab="following"
+      currentTab="follower"
     >
       <div className="mt-9 mb-5">
-        <Text size="lg"> 팔로잉 </Text>
+        <Text size="lg"> 팔로워 </Text>
         <Text size="lg" color="red">
-          {followingCount.toLocaleString()}
+          {followerCount.toLocaleString()}
         </Text>
       </div>
-      <FollowingList
-        initialFollowing={initialFollowing}
-        count={followingCount}
+      <FollowerList
+        initialFollower={initialFollower}
+        count={followerCount}
         shopId={shop.id}
       />
     </ShopLayout>

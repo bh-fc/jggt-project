@@ -308,7 +308,7 @@ export default function ProductDetail({
                 handleClickProductCount={() =>
                   router.push(`/shops/${shop.id}/products`)
                 }
-                handleClickFollowerCount={() => () =>
+                handleClickFollowerCount={() =>
                   router.push(`/shops/${shop.id}/follower`)
                 }
               />
