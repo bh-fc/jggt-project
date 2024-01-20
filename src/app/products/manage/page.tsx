@@ -1,4 +1,5 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 import ProductsLayout from '../_components/ProductsLayout'
 
@@ -9,56 +10,35 @@ import Container from '@/components/layout/Container'
 import { getMe } from '@/repository/me/getMe'
 import { getShopProductCount } from '@/repository/shops/getShopProductCount'
 import { getShopProducts } from '@/repository/shops/getShopProducts'
-import { Product } from '@/types'
 import { AuthError } from '@/utils/error'
-import getServerSupabase from '@/utils/supabase/getServerSupabase'
+import getServerComponentSupabase from '@/utils/supabase/getServerComponentSupabase'
 
-export const getServerSideProps: GetServerSideProps<{
-  products: Product[]
-  count: number
-  shopId: string
-}> = async (context) => {
-  const supabase = getServerSupabase(context)
+export default async function ProductsManage() {
+  const cookieStore = cookies()
+  const supabase = getServerComponentSupabase(cookieStore)
+
+  let shopId
 
   try {
-    const {
-      data: { shopId },
-    } = await getMe(supabase)
+    const { data } = await getMe(supabase)
 
-    if (!shopId) {
+    if (!data.shopId) {
       throw new AuthError()
     }
 
-    const [{ data: products }, { data: count }] = await Promise.all([
-      getShopProducts(supabase, { shopId, fromPage: 0, toPage: 1 }),
-      getShopProductCount(supabase, shopId),
-    ])
-
-    return {
-      props: {
-        shopId,
-        products,
-        count,
-      },
-    }
+    shopId = data.shopId
   } catch (e) {
     if (e instanceof AuthError) {
-      return {
-        redirect: {
-          destination: `/login?next=${encodeURIComponent(context.resolvedUrl)}`,
-          permanent: false,
-        },
-      }
+      return redirect(`/login?next=${encodeURIComponent('/products/manage')}`)
     }
     throw e
   }
-}
 
-export default function ProductsManage({
-  products: initialProducts,
-  count,
-  shopId,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [{ data: products }, { data: count }] = await Promise.all([
+    getShopProducts(supabase, { shopId, fromPage: 0, toPage: 1 }),
+    getShopProductCount(supabase, shopId),
+  ])
+
   return (
     <ProductsLayout currentTab="manage">
       <Container>
@@ -72,7 +52,7 @@ export default function ProductsManage({
             <Text className="w-28">기능</Text>
           </div>
           <ProductList
-            initialProducts={initialProducts}
+            initialProducts={products}
             count={count}
             shopId={shopId}
           />

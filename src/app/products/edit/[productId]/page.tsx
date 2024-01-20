@@ -1,18 +1,21 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 import ProductForm from '../../_components/ProductForm'
 
 import { getMe } from '@/repository/me/getMe'
 import { getProduct } from '@/repository/products/getProduct'
-import { Product } from '@/types'
 import { City } from '@/utils/address'
 import { AuthError } from '@/utils/error'
-import getServerSupabase from '@/utils/supabase/getServerSupabase'
+import getServerComponentSupabase from '@/utils/supabase/getServerComponentSupabase'
 
-export const getServerSideProps: GetServerSideProps<{
-  product: Product
-}> = async (context) => {
-  const supabase = getServerSupabase(context)
+type Props = {
+  params: { productId: string }
+}
+
+export default async function ProductEdit({ params: { productId } }: Props) {
+  const cookieStore = cookies()
+  const supabase = getServerComponentSupabase(cookieStore)
 
   try {
     const {
@@ -22,27 +25,17 @@ export const getServerSideProps: GetServerSideProps<{
     if (!shopId) {
       throw new AuthError()
     }
-
-    const productId = context.query.productId as string
-    const { data: product } = await getProduct(supabase, productId)
-
-    return { props: { product } }
   } catch (e) {
     if (e instanceof AuthError) {
-      return {
-        redirect: {
-          destination: `/login?next=${encodeURIComponent(context.resolvedUrl)}`,
-          permanent: false,
-        },
-      }
+      return redirect(
+        `/login?next=${encodeURIComponent(`/products/edit/${productId}`)}`,
+      )
     }
     throw e
   }
-}
 
-export default function ProductEdit({
-  product,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const { data: product } = await getProduct(supabase, productId)
+
   const [city, district] = product.address.split(' ')
 
   return (

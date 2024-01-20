@@ -1,4 +1,5 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 import ProductsLayout from '../../_components/ProductsLayout'
 import Tab from '../_components/Tab'
@@ -9,50 +10,37 @@ import Container from '@/components/layout/Container'
 import { getMe } from '@/repository/me/getMe'
 import { getShopBuyCount } from '@/repository/shops/getShopBuyCount'
 import { getShopBuys } from '@/repository/shops/getShopBuys'
-import { Product } from '@/types'
 import { AuthError } from '@/utils/error'
-import getServerSupabase from '@/utils/supabase/getServerSupabase'
+import getServerComponentSupabase from '@/utils/supabase/getServerComponentSupabase'
 
-export const getServerSideProps: GetServerSideProps<{
-  products: Product[]
-  count: number
-  shopId: string
-}> = async (context) => {
-  const supabase = getServerSupabase(context)
+export default async function ProductsHistoryBuy() {
+  const cookieStore = cookies()
+  const supabase = getServerComponentSupabase(cookieStore)
+
+  let shopId
 
   try {
-    const {
-      data: { shopId },
-    } = await getMe(supabase)
+    const { data } = await getMe(supabase)
 
-    if (!shopId) {
+    if (!data.shopId) {
       throw new AuthError()
     }
 
-    const [{ data: products }, { data: count }] = await Promise.all([
-      getShopBuys(supabase, { shopId, fromPage: 0, toPage: 1 }),
-      getShopBuyCount(supabase, shopId),
-    ])
-
-    return { props: { products, count, shopId } }
+    shopId = data.shopId
   } catch (e) {
     if (e instanceof AuthError) {
-      return {
-        redirect: {
-          destination: `/login?next=${encodeURIComponent(context.resolvedUrl)}`,
-          permanent: false,
-        },
-      }
+      return redirect(
+        `/login?next=${encodeURIComponent('/products/history/buy')}`,
+      )
     }
     throw e
   }
-}
 
-export default function ProductsHistoryBuy({
-  products: initialProducts,
-  count,
-  shopId,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const [{ data: products }, { data: count }] = await Promise.all([
+    getShopBuys(supabase, { shopId, fromPage: 0, toPage: 1 }),
+    getShopBuyCount(supabase, shopId),
+  ])
+
   return (
     <ProductsLayout currentTab="history">
       <Container>
@@ -64,7 +52,7 @@ export default function ProductsHistoryBuy({
           <div className="w-32">기능</div>
         </div>
         <BuyProductList
-          initialProducts={initialProducts}
+          initialProducts={products}
           count={count}
           shopId={shopId}
         />

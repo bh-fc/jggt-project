@@ -1,5 +1,7 @@
+'use client'
+
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { ChangeEventHandler, FormEvent, useRef, useState } from 'react'
 
 import ProductsLayout from '../ProductsLayout'
