@@ -1,10 +1,14 @@
+import { ReactNode } from 'react'
+
 import Search from './_components/Search'
 
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
 
-export default function Header() {
+type Props = { children: ReactNode }
+
+export default function Header({ children }: Props) {
   return (
     <div className="sticky top-0 z-10 bg-white border-b">
       <Wrapper>
@@ -42,6 +46,7 @@ export default function Header() {
           </div>
         </Container>
       </Wrapper>
+      {children}
     </div>
   )
 }
