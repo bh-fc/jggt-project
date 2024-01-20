@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 import AutoComplete from './_components/AutoComplete'
@@ -7,6 +8,7 @@ import Recent from './_components/Recent'
 import { addRecentKeyword } from '@/utils/localstorage'
 
 export default function Search() {
+  const router = useRouter()
   const [search, setSearch] = useState('')
   const [isFocused, setIsFocused] = useState(false)
 
@@ -19,6 +21,7 @@ export default function Search() {
             e.preventDefault()
             // 최근 검색어 추가
             addRecentKeyword(search)
+            router.push(`/search?query=${encodeURIComponent(search)}`)
           }}
         >
           <input

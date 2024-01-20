@@ -1,8 +1,10 @@
 import { throttle } from 'lodash'
+import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 
 import Text from '@/components/common/Text'
 import { getProductsByKeyword } from '@/repository/products/getProductsByKeyword'
+import { addRecentKeyword } from '@/utils/localstorage'
 
 type Props = {
   query: string
@@ -10,6 +12,7 @@ type Props = {
 }
 
 export default function AutoComplete({ query, handleClose }: Props) {
+  const router = useRouter()
   const [keywords, setKeywords] = useState<string[]>([])
 
   const handleSearch = useMemo(
@@ -56,9 +59,17 @@ export default function AutoComplete({ query, handleClose }: Props) {
           </div>
         ) : (
           <div className="h-full overflow-scroll pb-8">
-            {keywords.map((recent, idx) => (
-              <Text size="sm" key={idx} className="block my-1 truncate">
-                {recent}
+            {keywords.map((keyword) => (
+              <Text
+                size="sm"
+                key={keyword}
+                className="block my-1 truncate cursor-pointer"
+                onClick={() => {
+                  addRecentKeyword(keyword)
+                  router.push(`/search?query=${encodeURIComponent(keyword)}`)
+                }}
+              >
+                {keyword}
               </Text>
             ))}
           </div>
