@@ -5,6 +5,7 @@ import Spinner from '@/components/common/Spinner'
 import Text from '@/components/common/Text'
 import LoginPannel from '@/components/shared/LoginPannel'
 import { getMe } from '@/repository/me/getMe'
+import supabase from '@/utils/supabase'
 
 export default function Login() {
   const [showModal, setShowModal] = useState(false)
@@ -27,8 +28,9 @@ export default function Login() {
     })()
   }, [])
 
-  const handleLogOut = () => {
-    alert('로그아웃')
+  const handleLogOut = async () => {
+    await supabase.auth.signOut()
+    location.reload()
   }
 
   return (
