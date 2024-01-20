@@ -23,7 +23,7 @@ type Tabs = 'products' | 'reviews' | 'likes' | 'following' | 'follower'
 
 type Props = {
   isMyShop: boolean
-  shop: Shop
+  shop?: Shop
   productCount: number
   reviewCount: number
   likeCount: number
@@ -46,17 +46,22 @@ export default function ShopLayout({
   currentTab,
   children,
 }: Props) {
-  const [shopName, setShopName] = useState(shop.name)
-  const [shopIntroduce, setShopIntroduce] = useState(shop.introduce)
-  const [shopImageUrl, setShopImageUrl] = useState(shop.imageUrl)
+  const [shopName, setShopName] = useState(shop?.name || '')
+  const [shopIntroduce, setShopIntroduce] = useState(shop?.introduce || '')
+  const [shopImageUrl, setShopImageUrl] = useState(shop?.imageUrl || '')
 
   const [shopNameStatus, setShopNameState] = useState<EDIT_STUATUS>('IDLE')
   const [shopIntroduceStatus, setShopIntroduceState] =
     useState<EDIT_STUATUS>('IDLE')
 
   const handleSubmitShopName = async (e: FormEvent<HTMLFormElement>) => {
+    if (!shop) {
+      return
+    }
+
     try {
       e.preventDefault()
+
       setShopNameState('LOADING')
 
       const formData = new FormData(e.currentTarget)
@@ -72,6 +77,10 @@ export default function ShopLayout({
   }
 
   const handleSubmitShopIntroduce = async (e: FormEvent<HTMLFormElement>) => {
+    if (!shop) {
+      return
+    }
+
     try {
       e.preventDefault()
       setShopIntroduceState('LOADING')
@@ -91,6 +100,10 @@ export default function ShopLayout({
   const handleSubmitShopProfileImage = async (
     e: FormEvent<HTMLFormElement>,
   ) => {
+    if (!shop) {
+      return
+    }
+
     try {
       e.preventDefault()
 
@@ -104,6 +117,10 @@ export default function ShopLayout({
     } catch (e) {
       alert('이미지 수정에 실패했습니다.')
     }
+  }
+
+  if (!shop) {
+    return null
   }
 
   return (

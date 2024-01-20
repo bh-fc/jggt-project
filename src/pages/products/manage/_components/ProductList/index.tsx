@@ -13,14 +13,18 @@ import { Product } from '@/types'
 import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
-  initialProducts: Product[]
+  initialProducts?: Product[]
   count: number
   shopId: string
 }
 
 dayjs.extend(relativeTime).locale('ko')
 
-export default function ProductList({ initialProducts, count, shopId }: Props) {
+export default function ProductList({
+  initialProducts = [],
+  count,
+  shopId,
+}: Props) {
   const [currentPage, setCurrentPage] = useState(1)
   const [products, setProducts] = useState(initialProducts)
 

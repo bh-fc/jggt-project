@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: false,
   env: {
-    USE_MOCK_DATA: 'false',
+    USE_MOCK_DATA: process.env.USE_MOCK_DATA === 'true' ? 'true' : 'false',
   },
 }
 

@@ -4,7 +4,7 @@ export async function getMe(
   supabase: SupabaseClient,
 ): Promise<{ data: { shopId: string | null } }> {
   if (process.env.USE_MOCK_DATA === 'true') {
-    return Promise.resolve({ data: { shopId: 'mock-shop-id' } })
+    return { data: { shopId: 'mock-shop-id' } }
   }
 
   const {

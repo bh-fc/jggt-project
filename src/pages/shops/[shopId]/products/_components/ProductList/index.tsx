@@ -9,12 +9,16 @@ import { Product as TProduct } from '@/types'
 import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
-  initialProducts: TProduct[]
+  initialProducts?: TProduct[]
   count: number
   shopId: string
 }
 
-export default function ProductList({ initialProducts, count, shopId }: Props) {
+export default function ProductList({
+  initialProducts = [],
+  count,
+  shopId,
+}: Props) {
   // 화면에 보이는 Page는 1부터 시작. API는 0부터 시작
   const [currentPage, setCurrentPage] = useState(1)
   const [products, setProducts] = useState(initialProducts)

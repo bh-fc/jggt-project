@@ -9,13 +9,13 @@ import { Follow } from '@/types'
 import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
-  initialFollower: Follow[]
+  initialFollower?: Follow[]
   count: number
   shopId: string
 }
 
 export default function FollowerList({
-  initialFollower,
+  initialFollower = [],
   count,
   shopId,
 }: Props) {

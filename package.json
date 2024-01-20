@@ -6,6 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "dev:mock": "USE_MOCK_DATA=true next dev",
+    "build:mock": "USE_MOCK_DATA=true next build",
+    "start:mock": "USE_MOCK_DATA=true next start",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

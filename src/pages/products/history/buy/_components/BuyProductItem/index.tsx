@@ -7,10 +7,10 @@ import { getReviewByProductId } from '@/repository/reviews/getReviewByProductId'
 import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
-  id: string
-  title: string
-  price: number
-  imageUrl: string
+  id?: string
+  title?: string
+  price?: number
+  imageUrl?: string
 }
 
 export default function BuyProductItem({ id, title, price, imageUrl }: Props) {
@@ -18,8 +18,10 @@ export default function BuyProductItem({ id, title, price, imageUrl }: Props) {
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await getReviewByProductId(supabase, id)
-      setIsReviewPosted(!!data)
+      if (id) {
+        const { data } = await getReviewByProductId(supabase, id)
+        setIsReviewPosted(!!data)
+      }
     })()
   }, [id])
 
@@ -36,7 +38,7 @@ export default function BuyProductItem({ id, title, price, imageUrl }: Props) {
         </Link>
       </div>
       <div className="w-28 flex justify-center items-center">
-        <Text>{price.toLocaleString()}</Text>
+        <Text>{price?.toLocaleString()}</Text>
       </div>
       <div className="w-32 flex justify-center items-center">
         <Link href={`/reviews/${id}`} prefetch={false}>

@@ -9,12 +9,12 @@ import { Like } from '@/types'
 import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
-  initialLikes: Like[]
+  initialLikes?: Like[]
   count: number
   shopId: string
 }
 
-export default function LikeList({ initialLikes, count, shopId }: Props) {
+export default function LikeList({ initialLikes = [], count, shopId }: Props) {
   // 화면에 보이는 Page는 1부터 시작, API는 0부터 시작
   const [currentPage, setCurrentPage] = useState(1)
   const [likes, setLikes] = useState(initialLikes)

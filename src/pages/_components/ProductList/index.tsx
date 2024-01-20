@@ -9,10 +9,10 @@ import { Product as TProduct } from '@/types'
 import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
-  initialProducts: TProduct[]
+  initialProducts?: TProduct[]
 }
 
-export default function ProductList({ initialProducts }: Props) {
+export default function ProductList({ initialProducts = [] }: Props) {
   const [products, setProducts] = useState<TProduct[]>(initialProducts)
   const { ref, inView } = useInView({ threshold: 1 })
   const [isLoading, setIsLoading] = useState<boolean>(false)
