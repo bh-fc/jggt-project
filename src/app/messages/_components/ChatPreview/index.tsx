@@ -1,3 +1,5 @@
+'use client'
+
 import camelcaseKeys from 'camelcase-keys'
 import classNames from 'classnames'
 import Link from 'next/link'

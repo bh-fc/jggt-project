@@ -11,9 +11,8 @@ export async function getChatRooms(
 }> {
   if (process.env.USE_MOCK_DATA === 'true') {
     const { getMockChatRoomData } = await import('@/utils/mock')
-
-    const data: ChatRoom[] = Array.from({ length: 1000 }).map((_) =>
-      getMockChatRoomData({ toShopId: shopId }),
+    const data: ChatRoom[] = Array.from({ length: 1000 }).map((_, idx) =>
+      getMockChatRoomData({ id: idx.toString(), toShopId: shopId }),
     )
 
     return { data }

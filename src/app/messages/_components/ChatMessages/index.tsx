@@ -1,3 +1,5 @@
+'use client'
+
 import {
   ChangeEventHandler,
   FormEventHandler,
@@ -82,11 +84,7 @@ export default function ChatMessages({
           {counterShop.name}
         </Text>
       </div>
-      <Messages
-        chatRoomId={chatRoomId}
-        myShopId={myShopId}
-        counterShopId={counterShopId}
-      />
+      <Messages chatRoomId={chatRoomId} myShopId={myShopId} />
       <div className="bg-white py-2">
         <form
           onSubmit={handleSubmitMessage}

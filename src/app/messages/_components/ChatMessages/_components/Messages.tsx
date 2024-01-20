@@ -1,3 +1,5 @@
+'use client'
+
 import camelcaseKeys from 'camelcase-keys'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
@@ -17,16 +19,11 @@ import supabase from '@/utils/supabase/browserSupabase'
 type Props = {
   chatRoomId: string
   myShopId: string
-  counterShopId: string
 }
 
 dayjs.extend(relativeTime).locale('ko')
 
-export default function Messages({
-  chatRoomId,
-  myShopId,
-  counterShopId,
-}: Props) {
+export default function Messages({ chatRoomId, myShopId }: Props) {
   const virtuoso = useRef<VirtuosoHandle>(null)
 
   const [count, setCount] = useState<number>()
