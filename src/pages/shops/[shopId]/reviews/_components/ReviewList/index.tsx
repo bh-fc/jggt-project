@@ -6,6 +6,7 @@ import Pagination from '@/components/common/Pagination'
 import Text from '@/components/common/Text'
 import { getShopReviews } from '@/repository/shops/getShopReviews'
 import { Review } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   initialReviews: Review[]
@@ -20,7 +21,7 @@ export default function ReviewList({ initialReviews, count, shopId }: Props) {
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await getShopReviews({
+      const { data } = await getShopReviews(supabase, {
         shopId,
         // API 요청시에는 0부터 시작하기 때문에
         fromPage: currentPage - 1,

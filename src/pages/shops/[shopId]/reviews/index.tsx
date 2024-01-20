@@ -44,12 +44,12 @@ export const getServerSideProps: GetServerSideProps<{
   ] = await Promise.all([
     getMe(supabase),
     getShop(supabase, shopId),
-    getShopProductCount(shopId),
-    getShopReviewCount(shopId),
-    getShopLikeCount(shopId),
-    getShopFollowingCount(shopId),
-    getShopFollowerCount(shopId),
-    getShopReviews({ shopId, fromPage: 0, toPage: 1 }),
+    getShopProductCount(supabase, shopId),
+    getShopReviewCount(supabase, shopId),
+    getShopLikeCount(supabase, shopId),
+    getShopFollowingCount(supabase, shopId),
+    getShopFollowerCount(supabase, shopId),
+    getShopReviews(supabase, { shopId, fromPage: 0, toPage: 1 }),
   ])
 
   return {

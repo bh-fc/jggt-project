@@ -33,9 +33,9 @@ export default function FollowerItem({ shopId }: Props) {
         { data: followerCount },
       ] = await Promise.all([
         getShop(supabase, shopId),
-        getShopProducts({ shopId, fromPage: 0, toPage: 1 }),
-        getShopProductCount(shopId),
-        getShopFollowerCount(shopId),
+        getShopProducts(supabase, { shopId, fromPage: 0, toPage: 1 }),
+        getShopProductCount(supabase, shopId),
+        getShopFollowerCount(supabase, shopId),
       ])
 
       setData({

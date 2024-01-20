@@ -5,6 +5,7 @@ import Shop from '@/components/common/Shop'
 import Spinner from '@/components/common/Spinner'
 import { getShopFollowerCount } from '@/repository/shops/getShopFollowerCount'
 import { getShopProductCount } from '@/repository/shops/getShopProductCount'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   id: string
@@ -19,7 +20,10 @@ export default function SearchShopItem({ id, name, profileImageUrl }: Props) {
   useEffect(() => {
     ;(async () => {
       const [{ data: followerCount }, { data: productCount }] =
-        await Promise.all([getShopFollowerCount(id), getShopProductCount(id)])
+        await Promise.all([
+          getShopFollowerCount(supabase, id),
+          getShopProductCount(supabase, id),
+        ])
       setFollowerCount(followerCount)
       setProductCount(productCount)
     })()

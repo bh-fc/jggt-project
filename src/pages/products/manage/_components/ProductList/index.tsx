@@ -9,6 +9,7 @@ import Pagination from '@/components/common/Pagination'
 import Text from '@/components/common/Text'
 import { getShopProducts } from '@/repository/shops/getShopProducts'
 import { Product } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   initialProducts: Product[]
@@ -24,7 +25,7 @@ export default function ProductList({ initialProducts, count, shopId }: Props) {
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await getShopProducts({
+      const { data } = await getShopProducts(supabase, {
         shopId,
         fromPage: currentPage - 1,
         toPage: currentPage,

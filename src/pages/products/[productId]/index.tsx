@@ -74,17 +74,25 @@ export const getServerSideProps: GetServerSideProps<{
       : { data: false },
     Promise.all((product.tags || []).map((tag) => getProductsByTag(tag))),
     getShop(supabase, product.createdBy),
-    getShopProductCount(product.createdBy),
-    getShopFollowerCount(product.createdBy),
+    getShopProductCount(supabase, product.createdBy),
+    getShopFollowerCount(supabase, product.createdBy),
     myShopId !== null
       ? getIsFollowedByShopId({
           followerId: myShopId,
           followedId: product.createdBy,
         })
       : { data: false },
-    getShopProducts({ shopId: product.createdBy, fromPage: 0, toPage: 1 }),
-    getShopReviews({ shopId: product.createdBy, fromPage: 0, toPage: 1 }),
-    getShopReviewCount(product.createdBy),
+    getShopProducts(supabase, {
+      shopId: product.createdBy,
+      fromPage: 0,
+      toPage: 1,
+    }),
+    getShopReviews(supabase, {
+      shopId: product.createdBy,
+      fromPage: 0,
+      toPage: 1,
+    }),
+    getShopReviewCount(supabase, product.createdBy),
   ])
 
   const suggest = productsByTagsResult.map(({ data }) => data).flat()

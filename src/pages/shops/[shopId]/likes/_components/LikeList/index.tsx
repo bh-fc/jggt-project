@@ -6,6 +6,7 @@ import Pagination from '@/components/common/Pagination'
 import Text from '@/components/common/Text'
 import { getShopLikes } from '@/repository/shops/getShopLikes'
 import { Like } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   initialLikes: Like[]
@@ -20,7 +21,7 @@ export default function LikeList({ initialLikes, count, shopId }: Props) {
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await getShopLikes({
+      const { data } = await getShopLikes(supabase, {
         shopId,
         // API 요청시에는 0부터 시작하기 때문에
         fromPage: currentPage - 1,

@@ -5,6 +5,7 @@ import Pagination from '@/components/common/Pagination'
 import Text from '@/components/common/Text'
 import { getShopSells } from '@/repository/shops/getShopSells'
 import { Product } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   initialProducts: Product[]
@@ -22,7 +23,7 @@ export default function SellProductList({
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await getShopSells({
+      const { data } = await getShopSells(supabase, {
         shopId,
         fromPage: currentPage - 1,
         toPage: currentPage,

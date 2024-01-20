@@ -6,6 +6,7 @@ import Product from '@/components/common/Product'
 import Text from '@/components/common/Text'
 import { getShopProducts } from '@/repository/shops/getShopProducts'
 import { Product as TProduct } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   initialProducts: TProduct[]
@@ -20,7 +21,7 @@ export default function ProductList({ initialProducts, count, shopId }: Props) {
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await getShopProducts({
+      const { data } = await getShopProducts(supabase, {
         shopId,
         // API 요청시에는 0부터 시작하기 때문에
         fromPage: currentPage - 1,

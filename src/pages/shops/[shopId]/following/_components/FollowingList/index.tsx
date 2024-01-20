@@ -6,6 +6,7 @@ import Pagination from '@/components/common/Pagination'
 import Text from '@/components/common/Text'
 import { getShopFollowing } from '@/repository/shops/getShopFollowing'
 import { Follow } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   initialFollowing: Follow[]
@@ -24,7 +25,7 @@ export default function FollowingList({
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await getShopFollowing({
+      const { data } = await getShopFollowing(supabase, {
         shopId,
         // API 요청시에는 0부터 시작하기 때문에
         fromPage: currentPage - 1,

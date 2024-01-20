@@ -29,8 +29,8 @@ export const getServerSideProps: GetServerSideProps<{
     }
 
     const [{ data: products }, { data: count }] = await Promise.all([
-      getShopSells({ shopId, fromPage: 0, toPage: 1 }),
-      getShopSellCount(shopId),
+      getShopSells(supabase, { shopId, fromPage: 0, toPage: 1 }),
+      getShopSellCount(supabase, shopId),
     ])
 
     return { props: { products, count, shopId } }

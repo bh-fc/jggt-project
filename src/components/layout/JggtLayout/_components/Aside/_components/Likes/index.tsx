@@ -22,7 +22,7 @@ export default function Likes() {
         return
       }
 
-      const { data: likeCount } = await getShopLikeCount(shopId)
+      const { data: likeCount } = await getShopLikeCount(supabase, shopId)
       setLikeCount(likeCount)
       setShopId(shopId)
     })()
