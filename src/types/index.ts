@@ -5,7 +5,7 @@ export type Product = {
   address: string
   description: string
   imageUrls: string[]
-  isChangable: boolean
+  isChangeable: boolean
   isUsed: boolean
   tags: string[] | null
   createdAt: string

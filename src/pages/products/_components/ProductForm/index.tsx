@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic'
-import { useRef, useState } from 'react'
+import { useRouter } from 'next/router'
+import { ChangeEventHandler, FormEvent, useRef, useState } from 'react'
 
 import ProductsLayout from '../ProductsLayout'
 
@@ -8,14 +9,17 @@ import Input from '@/components/common/Input'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import MarkdownEditorSkeleton from '@/components/shared/MarkdownEditor/Skeleton'
+import { uploadImage } from '@/repository/common/uploadImage'
+import { createProduct } from '@/repository/products/createProduct'
 import { City, cities, getDistricts } from '@/utils/address'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   id: string
   imageUrls: string[]
   title: string
   isUsed: boolean
-  isChangable: boolean
+  isChangeable: boolean
   price: number
   city: City
   district: string
@@ -36,22 +40,32 @@ export default function ProductForm({
   imageUrls: defaultImageUrls,
   title: defaultTitle,
   isUsed: defaultIsUsed,
-  isChangable: defaultIsChangable,
+  isChangeable: defaultIsChangeable,
   price: defaultPrice,
   city: defaultCity,
   district: defaultDistrict,
   description: defaultDescription,
   tags: defaultTags,
 }: Partial<Props>) {
+  const router = useRouter()
   const tagInputRef = useRef<HTMLInputElement>(null)
   const [tags, setTags] = useState<string[]>(defaultTags || [])
   const [city, setCity] = useState<City | undefined>(defaultCity)
   const [description, setDescription] = useState<string>(
     defaultDescription || '',
   )
+  const [imageUrls, setImageUrls] = useState<string[]>([])
+  const [isLoading, setIsLoading] = useState(false)
 
-  const uploadImage = (file: File) => {
-    alert(file.name)
+  const handleUploadImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
+    if (e.target.files?.[0]) {
+      const imageFile = e.target.files[0]
+      const {
+        data: { imageUrl },
+      } = await uploadImage(supabase, imageFile)
+      e.target.value = ''
+      setImageUrls((prev) => [imageUrl, ...prev])
+    }
   }
 
   const handleAddTag = () => {
@@ -79,9 +93,59 @@ export default function ProductForm({
     setTags((prevTags) => prevTags.filter((tagItem) => tagItem !== tag))
   }
 
+  const handleRemoveImage = (imageUrl: string) => {
+    setImageUrls((prevImages) =>
+      prevImages.filter((imageUrlItem) => imageUrlItem !== imageUrl),
+    )
+  }
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    try {
+      e.preventDefault()
+      setIsLoading(true)
+      const formData = new FormData(e.currentTarget)
+
+      const tags = formData.getAll('tags') as string[]
+      const imageUrls = formData.getAll('imageUrls') as string[]
+
+      if (imageUrls.length === 0) {
+        alert('상품 이미지를 1개 이상 등록해주세요.')
+        setIsLoading(false)
+        return
+      }
+
+      const id = formData.get('id') as string
+      const title = formData.get('title') as string
+      const price = parseInt(formData.get('price') as string)
+      const city = formData.get('city') as string
+      const district = formData.get('district') as string
+      const address = `${city} ${district}`
+      const description = formData.get('description') as string
+
+      const isChangeable = formData.get('isChangeable') === 'y'
+      const isUsed = formData.get('isUsed') === 'y'
+
+      const { data } = await createProduct(supabase, {
+        title,
+        price,
+        address,
+        description,
+        isChangeable,
+        isUsed,
+        tags,
+        imageUrls,
+      })
+      router.push(`/products/${data?.id}`)
+    } catch (e) {
+      alert('상품 등록에 실패했습니다')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <ProductsLayout currentTab={defaultId ? undefined : 'new'}>
-      <form>
+      <form onSubmit={handleSubmit}>
         {defaultId && (
           <input type="hidden" name="id" defaultValue={defaultId} />
         )}
@@ -98,31 +162,53 @@ export default function ProductForm({
             <div className="w-40">
               <Text size="lg"> 상품 이미지 </Text>
               <Text size="lg" color="grey" weight="light">
-                (0/3)
+                ({imageUrls.length}/3)
               </Text>
               <Text size="md" color="red">
                 *
               </Text>
             </div>
-            <div>
-              <>
-                <label htmlFor="image">
-                  <div className="w-40 h-40 border flex justify-center items-center cursor-pointer">
-                    파일 업로드 하기
-                  </div>
-                </label>
-                <input
-                  type="file"
-                  id="image"
-                  accept=".jpg, .jpeg, .png"
-                  hidden
-                  onChange={(e) => {
-                    if (e.target.files![0]) {
-                      uploadImage(e.target.files![0])
-                    }
-                  }}
-                />
-              </>
+            <div className="flex gap-2">
+              {imageUrls.map((imageUrl) => (
+                <div key={imageUrl} className="w-40 h-40 border relative">
+                  <button
+                    type="button"
+                    className="rounded-full bg-black opacity-50 absolute top-1 right-1 w-8 h-8 text-white"
+                    onClick={() => handleRemoveImage(imageUrl)}
+                  >
+                    <span
+                      className="material-symbols-outlined"
+                      style={{ fontSize: '1rem' }}
+                    >
+                      close
+                    </span>
+                  </button>
+                  <img src={imageUrl} className="w-full h-full" />
+                  <input
+                    type="text"
+                    name="imageUrls"
+                    defaultValue={imageUrl}
+                    hidden
+                  />
+                </div>
+              ))}
+              {imageUrls.length < 3 && (
+                <>
+                  <label htmlFor="image">
+                    <div className="w-40 h-40 border flex justify-center items-center cursor-pointer">
+                      파일 업로드 하기
+                    </div>
+                  </label>
+                  <input
+                    type="file"
+                    id="image"
+                    accept=".jpg, .jpeg, .png"
+                    hidden
+                    disabled={imageUrls.length >= 3}
+                    onChange={handleUploadImage}
+                  />
+                </>
+              )}
             </div>
           </div>
           <div className="flex border-b border-grey-300 pb-7 pt-5">
@@ -178,12 +264,12 @@ export default function ProductForm({
             <div className="flex-1">
               <select
                 required
-                name="isChangable"
+                name="isChangeable"
                 className="border py-1 px-2 w-32"
                 defaultValue={
-                  defaultIsChangable === undefined
+                  defaultIsChangeable === undefined
                     ? undefined
-                    : defaultIsChangable
+                    : defaultIsChangeable
                       ? 'y'
                       : 'n'
                 }
@@ -274,17 +360,24 @@ export default function ProductForm({
                     >
                       close
                     </span>
+                    <input type="text" name="tags" defaultValue={tag} hidden />
                   </div>
                 ))}
               </div>
               <div className="flex w-96">
                 <Input
                   className="flex-1"
-                  name="tag"
                   type="text"
                   placeholder="태그를 입력하세요. (최대 5개)"
                   ref={tagInputRef}
                   disabled={tags.length >= 5}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      handleAddTag()
+                      return false
+                    }
+                  }}
                 />
                 <Button
                   type="button"
@@ -311,6 +404,14 @@ export default function ProductForm({
                 handleOnChage={(value) => {
                   setDescription(value)
                 }}
+              />
+              <input
+                type="text"
+                value={description}
+                name="description"
+                readOnly
+                required
+                className="opacity-0 h-1 w-1"
               />
             </div>
           </div>

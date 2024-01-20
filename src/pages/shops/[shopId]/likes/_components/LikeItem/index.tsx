@@ -4,6 +4,7 @@ import Product from '@/components/common/Product'
 import Spinner from '@/components/common/Spinner'
 import { getProduct } from '@/repository/products/getProduct'
 import { Product as TProduct } from '@/types'
+import supabase from '@/utils/supabase/browserSupabase'
 
 type Props = {
   productId: string
@@ -14,7 +15,7 @@ export default function LikeItem({ productId }: Props) {
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await getProduct(productId)
+      const { data } = await getProduct(supabase, productId)
       setProduct(data)
     })()
   }, [productId])

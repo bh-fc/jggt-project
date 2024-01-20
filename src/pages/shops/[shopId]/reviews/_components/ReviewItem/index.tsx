@@ -43,7 +43,7 @@ export default function ReviewItem({
     ;(async () => {
       const [{ data: reviewer }, { data: product }] = await Promise.all([
         getShop(supabase, reviewerId),
-        getProduct(productId),
+        getProduct(supabase, productId),
       ])
 
       setData({ reviewer, product })

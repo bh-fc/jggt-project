@@ -1,25 +1,27 @@
 import { SupabaseClient } from '@supabase/supabase-js'
 import camelcaseKeys from 'camelcase-keys'
+import snakecaseKeys from 'snakecase-keys'
 
 import { Product } from '@/types'
 
-export async function getProduct(
+type Params = Omit<
+  Omit<Omit<Omit<Product, 'id'>, 'createdAt'>, 'createdBy'>,
+  'purchaseBy'
+>
+
+export async function createProduct(
   supabase: SupabaseClient,
-  id: string,
-): Promise<{
-  data: Product
-}> {
+  params: Params,
+): Promise<{ data: Product }> {
   if (process.env.USE_MOCK_DATA === 'true') {
     const { getMockProductData } = await import('@/utils/mock')
-    const data: Product = getMockProductData({ id })
-    return { data }
+    return { data: getMockProductData() }
   }
 
   const { data, error } = await supabase
     .from('products')
-    .select('*')
-    .eq('id', id)
-    .limit(1)
+    .insert(snakecaseKeys(params))
+    .select()
     .single()
 
   if (error) {

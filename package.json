@@ -27,7 +27,8 @@
     "react-responsive-carousel": "^3.2.23",
     "react-virtuoso": "^4.6.2",
     "sass": "^1.69.5",
-    "scroll-lock": "^2.1.5"
+    "scroll-lock": "^2.1.5",
+    "snakecase-keys": "^5.5.0"
   },
   "devDependencies": {
     "@storybook/addon-essentials": "^7.6.4",

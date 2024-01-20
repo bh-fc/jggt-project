@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps<{
     }
 
     const productId = context.query.productId as string
-    const { data: product } = await getProduct(productId)
+    const { data: product } = await getProduct(supabase, productId)
 
     return { props: { product } }
   } catch (e) {
@@ -51,7 +51,7 @@ export default function ProductEdit({
       imageUrls={product.imageUrls}
       title={product.title}
       isUsed={product.isUsed}
-      isChangable={product.isChangable}
+      isChangeable={product.isChangeable}
       price={product.price}
       city={city as City}
       district={district}

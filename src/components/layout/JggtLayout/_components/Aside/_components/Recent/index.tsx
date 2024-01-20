@@ -7,6 +7,7 @@ import Text from '@/components/common/Text'
 import { getProduct } from '@/repository/products/getProduct'
 import { Product } from '@/types'
 import { RECENT_ITEM_IDS_KEY, getRecentItemIds } from '@/utils/localstorage'
+import supabase from '@/utils/supabase/browserSupabase'
 
 export default function Recent() {
   const [isLoading, setIsLoading] = useState(false)
@@ -26,7 +27,7 @@ export default function Recent() {
       setIsLoading(true)
       const recentIds = getRecentItemIds()
       const results = await Promise.all(
-        recentIds.map((productId) => getProduct(productId)),
+        recentIds.map((productId) => getProduct(supabase, productId)),
       )
       const products = results.map(({ data }) => data)
       setRecentProducts(products)

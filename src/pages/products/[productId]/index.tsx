@@ -50,7 +50,7 @@ export const getServerSideProps: GetServerSideProps<{
 
   const productId = context.query.productId as string
 
-  const { data: product } = await getProduct(productId)
+  const { data: product } = await getProduct(supabase, productId)
   const {
     data: { shopId: myShopId },
   } = await getMe(supabase)
@@ -272,7 +272,7 @@ export default function ProductDetail({
                   {product.isUsed ? '중고상품' : '새 상품'}
                 </div>
                 <div className="rounded bg-slate-200 px-3 py-1 text-sm">
-                  {product.isChangable ? '교환가능' : '교환불가'}
+                  {product.isChangeable ? '교환가능' : '교환불가'}
                 </div>
               </div>
               <div className="flex py-4 border-b mb-10">

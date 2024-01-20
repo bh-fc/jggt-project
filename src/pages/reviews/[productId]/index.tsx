@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps<{
     const productId = context.query.productId as string
 
     const [{ data: product }, { data: review }] = await Promise.all([
-      getProduct(productId),
+      getProduct(supabase, productId),
       getReviewByProductId(productId),
     ])
 
