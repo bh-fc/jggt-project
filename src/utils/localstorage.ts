@@ -1,3 +1,4 @@
+const RECENT_ITEM_IDS_KEY = 'recent_item_ids_[]'
 const RECENT_KEYWORDS_KEY = 'recent_keywords_[]'
 
 const getArray = (key: string) => {
@@ -32,4 +33,26 @@ export const addRecentKeyword = (keyword: string) => {
 
 export const clearRecentKeyword = () => {
   localStorage.removeItem(RECENT_KEYWORDS_KEY)
+}
+
+export const getRecentItemIds = (): string[] => getArray(RECENT_ITEM_IDS_KEY)
+
+export const addRecentItemId = (productId: string) => {
+  const items = getRecentItemIds()
+  const existItem = items.find((item) => item === productId)
+
+  if (existItem) {
+    const prevItems = items.filter((item) => item !== productId)
+    setArray(RECENT_ITEM_IDS_KEY, [productId, ...prevItems])
+  } else {
+    setArray(RECENT_ITEM_IDS_KEY, [productId, ...items])
+  }
+}
+
+export const removeRecentItemId = (productId: string) => {
+  const items = getRecentItemIds()
+  setArray(
+    RECENT_ITEM_IDS_KEY,
+    items.filter((item) => item !== productId),
+  )
 }

@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 
+import Recent from './_components/Recent'
 import styles from './style.module.scss'
 
 import Text from '@/components/common/Text'
@@ -26,14 +27,7 @@ export default function Aside() {
             0
           </Text>
         </div>
-        <div className="border border-grey p-2 bg-white flex flex-col items-center">
-          <Text size="xs">최근본상품</Text>
-          <div className="mt-2 text-center">
-            <Text size="xs" color="grey" className="block">
-              최근 본 상품이 없습니다
-            </Text>
-          </div>
-        </div>
+        <Recent />
       </aside>
     </Container>
   )
