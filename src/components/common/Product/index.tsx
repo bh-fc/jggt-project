@@ -45,7 +45,7 @@ export default function Product({
         <Text className="text-ellipsis overflow-hidden whitespace-nowrap block">
           {title}
         </Text>
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center flex-wrap">
           <div>
             <Text weight="bold"> {price.toLocaleString()} </Text>
             <Text weight="bold" size="sm">

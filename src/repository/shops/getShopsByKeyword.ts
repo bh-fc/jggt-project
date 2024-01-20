@@ -1,5 +1,3 @@
-import { fakerKO as faker } from '@faker-js/faker'
-
 import { Shop } from '@/types'
 import { getMockShopData } from '@/utils/mock'
 
@@ -15,9 +13,9 @@ export async function getShopsByKeyword({
   toPage = 1,
 }: Params): Promise<{ data: Shop[] }> {
   const data: Shop[] = Array.from({ length: (toPage - fromPage) * 10 }).map(
-    () =>
+    (_, idx) =>
       getMockShopData({
-        name: `${query} - ${faker.internet.displayName()}`,
+        name: `${query} - ${idx}`,
       }),
   )
 

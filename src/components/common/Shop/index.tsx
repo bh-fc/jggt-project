@@ -81,14 +81,20 @@ export default function Shop({
           )}
         >
           <div
-            className={classNames(handleClickProductCount && 'cursor-pointer')}
+            className={classNames(
+              'text-center',
+              handleClickProductCount && 'cursor-pointer',
+            )}
             onClick={handleClickProductCount}
           >
             상품 {productCount.toLocaleString()}
           </div>
           |
           <div
-            className={classNames(handleClickFollowerCount && 'cursor-pointer')}
+            className={classNames(
+              'text-center',
+              handleClickFollowerCount && 'cursor-pointer',
+            )}
             onClick={handleClickFollowerCount}
           >
             팔로워 {followerCount.toLocaleString()}

@@ -17,7 +17,7 @@ export default function Header({ children }: Props) {
     <div className="sticky top-0 z-10 bg-white border-b">
       <Wrapper>
         <Container>
-          <div className="flex justify-between items-center py-8">
+          <div className="flex justify-between items-center py-8 gap-2">
             <Link href="/" prefetch={false}>
               <a>
                 <Text
