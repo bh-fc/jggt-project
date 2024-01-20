@@ -264,6 +264,7 @@ export default function ShopLayout({
                   ? 'border-black border-b-0'
                   : 'bg-gray-100 text-gray-600 border-gray',
               )}
+              data-cy="shops-products-tab"
             >
               상품 <Text className="ml-2">{productCount.toLocaleString()}</Text>
             </a>
@@ -276,6 +277,7 @@ export default function ShopLayout({
                   ? 'border-black border-b-0'
                   : 'bg-gray-100 text-gray-600 border-gray',
               )}
+              data-cy="shops-reviews-tab"
             >
               상점후기
               <Text className="ml-2">{reviewCount.toLocaleString()}</Text>
@@ -289,6 +291,7 @@ export default function ShopLayout({
                   ? 'border-black border-b-0'
                   : 'bg-gray-100 text-gray-600 border-gray',
               )}
+              data-cy="shops-likes-tab"
             >
               찜 <Text className="ml-2">{likeCount.toLocaleString()}</Text>
             </a>
@@ -301,6 +304,7 @@ export default function ShopLayout({
                   ? 'border-black border-b-0'
                   : 'bg-gray-100 text-gray-600 border-gray',
               )}
+              data-cy="shops-following-tab"
             >
               팔로잉
               <Text className="ml-2">{followingCount.toLocaleString()}</Text>
@@ -314,6 +318,7 @@ export default function ShopLayout({
                   ? 'border-black border-b-0'
                   : 'bg-gray-100 text-gray-600 border-gray',
               )}
+              data-cy="shops-follower-tab"
             >
               팔로워
               <Text className="ml-2">{followerCount.toLocaleString()}</Text>
