@@ -21,12 +21,15 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const query = decodeURIComponent(originalQuery)
-  const { data: products } = await getProductsByKeyword({
-    query,
-    fromPage: 0,
-    toPage: 1,
-  })
-  const { data: count } = await getProductsByKeywordCount(query)
+
+  const [{ data: products }, { data: count }] = await Promise.all([
+    getProductsByKeyword({
+      query,
+      fromPage: 0,
+      toPage: 1,
+    }),
+    getProductsByKeywordCount(query),
+  ])
 
   return { props: { products, query, count } }
 }

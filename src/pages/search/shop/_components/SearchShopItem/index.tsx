@@ -17,8 +17,8 @@ export default function SearchShopItem({ id, name, profileImageUrl }: Props) {
 
   useEffect(() => {
     ;(async () => {
-      const { data: followerCount } = await getShopFollowerCount(id)
-      const { data: productCount } = await getShopProductCount(id)
+      const [{ data: followerCount }, { data: productCount }] =
+        await Promise.all([getShopFollowerCount(id), getShopProductCount(id)])
       setFollowerCount(followerCount)
       setProductCount(productCount)
     })()
