@@ -1,3 +1,4 @@
+import camelcaseKeys from 'camelcase-keys'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -32,6 +33,7 @@ export default function Messages({
   const [firstItemIndex, setFirstItemIndex] = useState<number>()
   const [messages, setMessage] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [hasNewMessage, setHasNewMessage] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -53,6 +55,35 @@ export default function Messages({
         align: 'end',
       })
     })()
+  }, [chatRoomId])
+
+  useEffect(() => {
+    const subscribeChat = supabase.channel(`chat_on_${chatRoomId}`).on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'chat_messages',
+        filter: `chat_room=eq.${chatRoomId}`,
+      },
+      (payload) => {
+        setMessage((prev) => [
+          ...prev,
+          camelcaseKeys(payload.new) as ChatMessage,
+        ])
+        setCount((prev = 0) => prev + 1)
+        setHasNewMessage(true)
+        setTimeout(() => {
+          setHasNewMessage(false)
+        }, 3000)
+      },
+    )
+
+    subscribeChat.subscribe()
+
+    return () => {
+      subscribeChat.unsubscribe()
+    }
   }, [chatRoomId])
 
   const handleGetPrevMessage = async (index: number) => {
@@ -85,6 +116,23 @@ export default function Messages({
               <Spinner />
             </Text>
           </div>
+        </div>
+      )}
+      {hasNewMessage && (
+        <div className="absolute bottom-1 left-0 w-full z-30">
+          <button
+            type="button"
+            className="rounded bg-black text-center w-full m-auto opacity-50"
+            onClick={() => {
+              virtuoso.current?.scrollToIndex({
+                index: messages.length - 1,
+                align: 'end',
+              })
+              setHasNewMessage(false)
+            }}
+          >
+            <Text color="white"> 새 메시지 보기 </Text>
+          </button>
         </div>
       )}
       {messages.length === 0 ? (

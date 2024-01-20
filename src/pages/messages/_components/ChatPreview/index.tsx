@@ -1,3 +1,4 @@
+import camelcaseKeys from 'camelcase-keys'
 import classNames from 'classnames'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -40,6 +41,27 @@ export default function ChatPreview({ chatRoomId, shopId, isActive }: Props) {
       setLastMessage(lastMessage === undefined ? null : lastMessage)
     })()
   }, [chatRoomId, shopId])
+
+  useEffect(() => {
+    const subscribeChat = supabase.channel(`preview_on_${chatRoomId}`).on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'chat_messages',
+        filter: `chat_room=eq.${chatRoomId}`,
+      },
+      (payload) => {
+        setLastMessage(camelcaseKeys(payload.new) as ChatMessage)
+      },
+    )
+
+    subscribeChat.subscribe()
+
+    return () => {
+      subscribeChat.unsubscribe()
+    }
+  }, [chatRoomId])
 
   if (shop === undefined || lastMessage === undefined) {
     return (

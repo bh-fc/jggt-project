@@ -1,5 +1,6 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import { useRouter } from 'next/router'
+import { useCallback, useEffect, useState } from 'react'
 import { Virtuoso } from 'react-virtuoso'
 
 import ChatMessages from './_components/ChatMessages'
@@ -12,6 +13,7 @@ import { getChatRooms } from '@/repository/chatRooms/getChatRooms'
 import { getMe } from '@/repository/me/getMe'
 import { ChatRoom } from '@/types'
 import { AuthError } from '@/utils/error'
+import supabase from '@/utils/supabase/browserSupabase'
 import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
 export const getServerSideProps: GetServerSideProps<{
@@ -48,12 +50,55 @@ export const getServerSideProps: GetServerSideProps<{
 }
 
 export default function Messages({
-  chatRooms,
+  chatRooms: initialChatRooms,
   shopId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter()
+
+  const [chatRooms, setChatRooms] = useState(initialChatRooms)
+
   const currentChatRoomId = router.query.chatRoomId?.[0]
   const currentChatRoom = chatRooms.find(({ id }) => id === currentChatRoomId)
+
+  const handleUpdateChatRooms = useCallback(async () => {
+    const { data } = await getChatRooms(supabase, shopId)
+    setChatRooms(data)
+  }, [shopId])
+
+  useEffect(() => {
+    const subscribeChatRoomsFromMe = supabase
+      .channel(`chat_rooms_from_${shopId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_rooms',
+          filter: `from_shop_id=eq.${shopId}`,
+        },
+        () => handleUpdateChatRooms(),
+      )
+    const subscribeChatRoomsToMe = supabase
+      .channel(`chat_rooms_to_${shopId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_rooms',
+          filter: `to_shop_id=eq.${shopId}`,
+        },
+        () => handleUpdateChatRooms(),
+      )
+
+    subscribeChatRoomsFromMe.subscribe()
+    subscribeChatRoomsToMe.subscribe()
+
+    return () => {
+      subscribeChatRoomsFromMe.unsubscribe()
+      subscribeChatRoomsToMe.unsubscribe()
+    }
+  }, [handleUpdateChatRooms, shopId])
 
   return (
     <Wrapper className="bg-gray-100">
