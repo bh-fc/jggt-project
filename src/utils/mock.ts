@@ -1,6 +1,14 @@
 import { fakerKO as faker } from '@faker-js/faker'
 
-import { ChatRoom, Follow, Like, Product, Review, Shop } from '@/types'
+import {
+  ChatMessage,
+  ChatRoom,
+  Follow,
+  Like,
+  Product,
+  Review,
+  Shop,
+} from '@/types'
 
 export function getMockProductData(defaultValue?: Partial<Product>) {
   const data: Product = {
@@ -81,6 +89,17 @@ export function getMockChatRoomData(defaultValue?: Partial<ChatRoom>) {
     createdAt: defaultValue?.createdAt ?? faker.date.past().toString(),
     fromShopId: defaultValue?.fromShopId ?? faker.string.uuid(),
     toShopId: defaultValue?.toShopId ?? faker.string.uuid(),
+  }
+  return data
+}
+
+export function getMockChatMessageData(defaultValue?: Partial<ChatMessage>) {
+  const data: ChatMessage = {
+    id: defaultValue?.id ?? faker.string.uuid(),
+    createdAt: defaultValue?.createdAt ?? faker.date.past().toString(),
+    chatRoom: defaultValue?.chatRoom ?? faker.string.uuid(),
+    message: defaultValue?.message ?? faker.lorem.sentences(3, '\n'),
+    createdBy: defaultValue?.createdBy ?? faker.string.uuid(),
   }
   return data
 }

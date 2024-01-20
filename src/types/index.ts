@@ -49,3 +49,11 @@ export type ChatRoom = {
   fromShopId: string
   toShopId: string
 }
+
+export type ChatMessage = {
+  id: string
+  createdAt: string
+  chatRoom: string
+  message: string
+  createdBy: string
+}

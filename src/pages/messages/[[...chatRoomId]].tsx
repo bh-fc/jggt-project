@@ -1,4 +1,5 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { useRouter } from 'next/router'
 
 import ChatPreview from './_components/ChatPreview'
 
@@ -32,6 +33,9 @@ export default function Messages({
   chatRooms,
   shopId,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const router = useRouter()
+  const currentChatRoomId = router.query.chatRoomId?.[0]
+
   return (
     <Wrapper className="bg-gray-100">
       <Container>
@@ -63,7 +67,19 @@ export default function Messages({
               </div>
             )}
           </div>
-          <div className="w-1/2">대화</div>
+          <div
+            className="w-1/2 border-l border-grey pl-2"
+            style={{
+              minHeight: 'calc(100vh - 28px - 108px - 65px)',
+              maxHeight: 'calc(100vh - 28px - 108px - 65px)',
+            }}
+          >
+            {!currentChatRoomId ? (
+              <div className="flex justify-center items-center h-full">
+                <Text color="grey">대화를 선택해주세요</Text>
+              </div>
+            ) : null}
+          </div>
         </div>
       </Container>
     </Wrapper>
