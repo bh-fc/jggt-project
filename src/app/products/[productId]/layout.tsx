@@ -1,13 +1,11 @@
 import { Metadata } from 'next'
-import { cookies } from 'next/headers'
 import { ReactNode } from 'react'
 
 import ProductWrapper from './_components/ProductWrapper'
 
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
-import { getProduct } from '@/repository/products/getProduct'
-import getServerComponentSupabase from '@/utils/supabase/getServerComponentSupabase'
+import { getProductApi } from '@/repository/products/getProductApi'
 
 type Props = {
   params: { productId: string }
@@ -19,10 +17,7 @@ type Props = {
 export async function generateMetadata({
   params: { productId },
 }: Props): Promise<Metadata> {
-  const cookieStore = cookies()
-  const supabase = getServerComponentSupabase(cookieStore)
-
-  const { data: product } = await getProduct(supabase, productId)
+  const { data: product } = await getProductApi(productId)
 
   const title = `중고장터 - ${product.title}`
 
@@ -41,10 +36,7 @@ export default async function ProductsDetailLayout({
   detail,
   shop,
 }: Props) {
-  const cookieStore = cookies()
-  const supabase = getServerComponentSupabase(cookieStore)
-
-  const { data: product } = await getProduct(supabase, productId)
+  const { data: product } = await getProductApi(productId)
 
   return (
     <ProductWrapper productId={product.id}>

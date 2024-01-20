@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
 
 import { createProduct } from '@/repository/products/createProduct'
@@ -103,5 +104,7 @@ export async function updateProductAction(
       errorMessage:
         (e instanceof Error && e.message) || '알 수 없는 에러가 발생했습니다.',
     }
+  } finally {
+    revalidateTag('product')
   }
 }

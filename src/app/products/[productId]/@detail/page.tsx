@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Product from '@/components/common/Product'
 import Text from '@/components/common/Text'
 import MarkdownViewerSkeleton from '@/components/shared/MarkdownViewer/Skeleton'
-import { getProduct } from '@/repository/products/getProduct'
+import { getProductApi } from '@/repository/products/getProductApi'
 import { getProductsByTag } from '@/repository/products/getProductsByTag'
 import getServerComponentSupabase from '@/utils/supabase/getServerComponentSupabase'
 
@@ -24,10 +24,11 @@ type Props = {
 export default async function ProductsDetailDetail({
   params: { productId },
 }: Props) {
+  const { data: product } = await getProductApi(productId)
+
   const cookieStore = cookies()
   const supabase = getServerComponentSupabase(cookieStore)
 
-  const { data: product } = await getProduct(supabase, productId)
   const productsByTagsResult = await Promise.all(
     (product.tags || []).map((tag) => getProductsByTag(supabase, tag)),
   )

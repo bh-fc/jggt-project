@@ -13,6 +13,7 @@ const nextConfig = {
   },
   env: {
     USE_MOCK_DATA: process.env.USE_MOCK_DATA === 'true' ? 'true' : 'false',
+    API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:3000',
   },
 }
 

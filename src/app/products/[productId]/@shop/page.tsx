@@ -11,7 +11,7 @@ import ShopInfo from '../_components/ShopInfo'
 import Text from '@/components/common/Text'
 import { getIsFollowedByShopId } from '@/repository/followes/getIsFollowedByShopId'
 import { getMe } from '@/repository/me/getMe'
-import { getProduct } from '@/repository/products/getProduct'
+import { getProductApi } from '@/repository/products/getProductApi'
 import { getShop } from '@/repository/shops/getShop'
 import { getShopFollowerCount } from '@/repository/shops/getShopFollowerCount'
 import { getShopProductCount } from '@/repository/shops/getShopProductCount'
@@ -26,10 +26,11 @@ type Props = {
 export default async function ProductsDetailShop({
   params: { productId },
 }: Props) {
+  const { data: product } = await getProductApi(productId)
+
   const cookieStore = cookies()
   const supabase = getServerComponentSupabase(cookieStore)
 
-  const { data: product } = await getProduct(supabase, productId)
   const {
     data: { shopId: myShopId },
   } = await getMe(supabase)

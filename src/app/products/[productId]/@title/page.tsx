@@ -11,7 +11,7 @@ import PurchaseButton from '../_components/PurchaseButton'
 import Text from '@/components/common/Text'
 import { getIsLikedWithProductIdAndShopId } from '@/repository/likes/getIsLikedWithProductIdAndShopId'
 import { getMe } from '@/repository/me/getMe'
-import { getProduct } from '@/repository/products/getProduct'
+import { getProductApi } from '@/repository/products/getProductApi'
 import { getShop } from '@/repository/shops/getShop'
 import getServerComponentSupabase from '@/utils/supabase/getServerComponentSupabase'
 
@@ -24,10 +24,10 @@ type Props = {
 export default async function ProductsDetailTitle({
   params: { productId },
 }: Props) {
+  const { data: product } = await getProductApi(productId)
+
   const cookieStore = cookies()
   const supabase = getServerComponentSupabase(cookieStore)
-
-  const { data: product } = await getProduct(supabase, productId)
 
   const {
     data: { shopId: myShopId },
