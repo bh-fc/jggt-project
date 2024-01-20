@@ -7,23 +7,45 @@ import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
 import MarkdownEditorSkeleton from '@/components/shared/MarkdownEditor/Skeleton'
+import { getMe } from '@/repository/me/getMe'
 import { getProduct } from '@/repository/products/getProduct'
 import { getReviewByProductId } from '@/repository/reviews/getReviewByProductId'
 import { Product, Review } from '@/types'
+import { AuthError } from '@/utils/error'
 
 export const getServerSideProps: GetServerSideProps<{
   product: Product
   review: Review | null
 }> = async (context) => {
-  const productId = context.query.productId as string
+  try {
+    const {
+      data: { shopId },
+    } = await getMe()
 
-  const [{ data: product }, { data: review }] = await Promise.all([
-    getProduct(productId),
-    getReviewByProductId(productId),
-  ])
+    if (!shopId) {
+      throw new AuthError()
+    }
 
-  return {
-    props: { product, review },
+    const productId = context.query.productId as string
+
+    const [{ data: product }, { data: review }] = await Promise.all([
+      getProduct(productId),
+      getReviewByProductId(productId),
+    ])
+
+    return {
+      props: { product, review },
+    }
+  } catch (e) {
+    if (e instanceof AuthError) {
+      return {
+        redirect: {
+          destination: `/login?next=${encodeURIComponent(context.resolvedUrl)}`,
+          permanent: false,
+        },
+      }
+    }
+    throw e
   }
 }
 

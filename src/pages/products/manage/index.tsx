@@ -10,31 +10,44 @@ import { getMe } from '@/repository/me/getMe'
 import { getShopProductCount } from '@/repository/shops/getShopProductCount'
 import { getShopProducts } from '@/repository/shops/getShopProducts'
 import { Product } from '@/types'
+import { AuthError } from '@/utils/error'
 
 export const getServerSideProps: GetServerSideProps<{
   products: Product[]
   count: number
   shopId: string
 }> = async (context) => {
-  const {
-    data: { shopId },
-  } = await getMe()
+  try {
+    const {
+      data: { shopId },
+    } = await getMe()
 
-  if (!shopId) {
-    throw new Error('로그인이 필요합니다')
-  }
+    if (!shopId) {
+      throw new AuthError()
+    }
 
-  const [{ data: products }, { data: count }] = await Promise.all([
-    getShopProducts({ shopId, fromPage: 0, toPage: 1 }),
-    getShopProductCount(shopId),
-  ])
+    const [{ data: products }, { data: count }] = await Promise.all([
+      getShopProducts({ shopId, fromPage: 0, toPage: 1 }),
+      getShopProductCount(shopId),
+    ])
 
-  return {
-    props: {
-      shopId,
-      products,
-      count,
-    },
+    return {
+      props: {
+        shopId,
+        products,
+        count,
+      },
+    }
+  } catch (e) {
+    if (e instanceof AuthError) {
+      return {
+        redirect: {
+          destination: `/login?next=${encodeURIComponent(context.resolvedUrl)}`,
+          permanent: false,
+        },
+      }
+    }
+    throw e
   }
 }
 

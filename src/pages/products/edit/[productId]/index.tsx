@@ -2,18 +2,41 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 
 import ProductForm from '../../_components/ProductForm'
 
+import { getMe } from '@/repository/me/getMe'
 import { getProduct } from '@/repository/products/getProduct'
 import { Product } from '@/types'
 import { City } from '@/utils/address'
+import { AuthError } from '@/utils/error'
 
 export const getServerSideProps: GetServerSideProps<{
   product: Product
 }> = async (context) => {
-  const productId = context.query.productId as string
-  const { data: product } = await getProduct(productId)
+  try {
+    const {
+      data: { shopId },
+    } = await getMe()
 
-  return { props: { product } }
+    if (!shopId) {
+      throw new AuthError()
+    }
+
+    const productId = context.query.productId as string
+    const { data: product } = await getProduct(productId)
+
+    return { props: { product } }
+  } catch (e) {
+    if (e instanceof AuthError) {
+      return {
+        redirect: {
+          destination: `/login?next=${encodeURIComponent(context.resolvedUrl)}`,
+          permanent: false,
+        },
+      }
+    }
+    throw e
+  }
 }
+
 export default function ProductEdit({
   product,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {

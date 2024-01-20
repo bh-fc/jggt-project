@@ -11,23 +11,36 @@ import Wrapper from '@/components/layout/Wrapper'
 import { getChatRooms } from '@/repository/chatRooms/getChatRooms'
 import { getMe } from '@/repository/me/getMe'
 import { ChatRoom } from '@/types'
+import { AuthError } from '@/utils/error'
 
 export const getServerSideProps: GetServerSideProps<{
   chatRooms: ChatRoom[]
   shopId: string
 }> = async (context) => {
-  const {
-    data: { shopId },
-  } = await getMe()
+  try {
+    const {
+      data: { shopId },
+    } = await getMe()
 
-  if (!shopId) {
-    throw new Error('로그인이 필요합니다')
-  }
+    if (!shopId) {
+      throw new AuthError()
+    }
 
-  const { data: chatRooms } = await getChatRooms(shopId)
+    const { data: chatRooms } = await getChatRooms(shopId)
 
-  return {
-    props: { chatRooms, shopId },
+    return {
+      props: { chatRooms, shopId },
+    }
+  } catch (e) {
+    if (e instanceof AuthError) {
+      return {
+        redirect: {
+          destination: `/login?next=${encodeURIComponent(context.resolvedUrl)}`,
+          permanent: false,
+        },
+      }
+    }
+    throw e
   }
 }
 
