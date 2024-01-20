@@ -74,9 +74,7 @@ export default function ProductList({
                 </div>
                 <div className="flex-1 flex justify-center items-center">
                   <Link href={`/products/${id}`}>
-                    <a>
-                      <Text>{title}</Text>
-                    </a>
+                    <Text>{title}</Text>
                   </Link>
                 </div>
                 <div className="w-28 flex justify-center items-center">
@@ -88,11 +86,9 @@ export default function ProductList({
                 <div className="w-28 flex justify-center items-center">
                   <div className="flex gap-2">
                     <Link href={`/products/edit/${id}`}>
-                      <a>
-                        <Button size="sm" color="orange" className="h-8 w-15">
-                          수정
-                        </Button>
-                      </a>
+                      <Button size="sm" color="orange" className="h-8 w-15">
+                        수정
+                      </Button>
                     </Link>
                     <Button
                       size="sm"

@@ -78,14 +78,12 @@ export default function Search({
           ) : (
             products.map(({ id, title, price, createdAt, imageUrls }) => (
               <Link key={id} href={`/products/${id}`}>
-                <a>
-                  <Product
-                    title={title}
-                    price={price}
-                    createdAt={createdAt}
-                    imageUrl={imageUrls[0]}
-                  />
-                </a>
+                <Product
+                  title={title}
+                  price={price}
+                  createdAt={createdAt}
+                  imageUrl={imageUrls[0]}
+                />
               </Link>
             ))
           )}

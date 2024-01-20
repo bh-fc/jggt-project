@@ -47,9 +47,7 @@ export default function SellProductList({
               </div>
               <div className="flex-1 flex justify-center items-center">
                 <Link href={`/products/${id}`}>
-                  <a>
-                    <Text>{title}</Text>
-                  </a>
+                  <Text>{title}</Text>
                 </Link>
               </div>
               <div className="w-28 flex justify-center items-center">

@@ -72,31 +72,32 @@ export default function ChatPreview({ chatRoomId, shopId, isActive }: Props) {
   }
 
   return (
-    <Link href={`/messages/${chatRoomId}`} prefetch={false} shallow>
-      <a
-        className={classNames(
-          'flex py-3 hover:bg-gray-100 h-20 shrink-0',
-          isActive && 'bg-gray-200 hover:bg-gray-200',
-        )}
-      >
-        <div className="mx-3">
-          <ShopProfileImage imageUrl={shop.imageUrl || undefined} />
-        </div>
-        <div className="flex flex-col mx-3 flex-1 w-0">
-          <Text size="lg" weight="bold">
-            {shop.name}
+    <Link
+      href={`/messages/${chatRoomId}`}
+      prefetch={false}
+      shallow
+      className={classNames(
+        'flex py-3 hover:bg-gray-100 h-20 shrink-0',
+        isActive && 'bg-gray-200 hover:bg-gray-200',
+      )}
+    >
+      <div className="mx-3">
+        <ShopProfileImage imageUrl={shop.imageUrl || undefined} />
+      </div>
+      <div className="flex flex-col mx-3 flex-1 w-0">
+        <Text size="lg" weight="bold">
+          {shop.name}
+        </Text>
+        <div className="truncate">
+          <Text size="sm" color="grey">
+            {lastMessage
+              ? checkIsImage(lastMessage.message)
+                ? '[이미지]'
+                : lastMessage.message
+              : '🙏 메시지가 없습니다'}
           </Text>
-          <div className="truncate">
-            <Text size="sm" color="grey">
-              {lastMessage
-                ? checkIsImage(lastMessage.message)
-                  ? '[이미지]'
-                  : lastMessage.message
-                : '🙏 메시지가 없습니다'}
-            </Text>
-          </div>
         </div>
-      </a>
+      </div>
     </Link>
   )
 }

@@ -38,16 +38,14 @@ export default function SearchShopItem({ id, name, profileImageUrl }: Props) {
   }
 
   return (
-    <Link href={`/shops/${id}`}>
-      <a className="border border-grey-300 p-5">
-        <Shop
-          type="row"
-          name={name}
-          productCount={productCount}
-          followerCount={followerCount}
-          profileImageUrl={profileImageUrl}
-        />
-      </a>
+    <Link href={`/shops/${id}`} className="border border-grey-300 p-5">
+      <Shop
+        type="row"
+        name={name}
+        productCount={productCount}
+        followerCount={followerCount}
+        profileImageUrl={profileImageUrl}
+      />
     </Link>
   )
 }

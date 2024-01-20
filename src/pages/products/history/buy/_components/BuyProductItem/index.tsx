@@ -32,9 +32,7 @@ export default function BuyProductItem({ id, title, price, imageUrl }: Props) {
       </div>
       <div className="flex-1 flex justify-center items-center">
         <Link href={`/products/${id}`}>
-          <a>
-            <Text>{title}</Text>
-          </a>
+          <Text>{title}</Text>
         </Link>
       </div>
       <div className="w-28 flex justify-center items-center">
@@ -42,22 +40,20 @@ export default function BuyProductItem({ id, title, price, imageUrl }: Props) {
       </div>
       <div className="w-32 flex justify-center items-center">
         <Link href={`/reviews/${id}`} prefetch={false}>
-          <a>
-            <Button
-              disabled={isReviewPosted}
-              isLoading={isReviewPosted === undefined}
-              color="red"
-              className="flex justify-center items-center gap-1"
+          <Button
+            disabled={isReviewPosted}
+            isLoading={isReviewPosted === undefined}
+            color="red"
+            className="flex justify-center items-center gap-1"
+          >
+            <span
+              style={{ fontSize: '1rem' }}
+              className="material-symbols-outlined"
             >
-              <span
-                style={{ fontSize: '1rem' }}
-                className="material-symbols-outlined"
-              >
-                rate_review
-              </span>
-              후기작성
-            </Button>
-          </a>
+              rate_review
+            </span>
+            후기작성
+          </Button>
         </Link>
       </div>
     </div>

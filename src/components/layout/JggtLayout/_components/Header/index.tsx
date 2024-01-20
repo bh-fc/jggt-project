@@ -19,42 +19,46 @@ export default function Header({ children }: Props) {
         <Container>
           <div className="flex justify-between items-center py-8 gap-2">
             <Link href="/" prefetch={false}>
-              <a>
-                <Text
-                  size="4xl"
-                  style={{ fontFamily: `'Black Han Sans', sans-serif` }}
-                >
-                  🗃 중고장터
-                </Text>
-              </a>
+              <Text
+                size="4xl"
+                style={{ fontFamily: `'Black Han Sans', sans-serif` }}
+              >
+                🗃 중고장터
+              </Text>
             </Link>
             <Search />
             <div className="flex gap-2">
-              <Link href="/products/new" prefetch={false}>
-                <a className="flex items-center">
-                  <span className="material-symbols-outlined">sell</span>
-                  <Text weight="light" size="sm" className="mx-1">
-                    판매하기
-                  </Text>
-                </a>
+              <Link
+                href="/products/new"
+                prefetch={false}
+                className="flex items-center"
+              >
+                <span className="material-symbols-outlined">sell</span>
+                <Text weight="light" size="sm" className="mx-1">
+                  판매하기
+                </Text>
               </Link>
               |
-              <Link href="/my-shop" prefetch={false}>
-                <a className="flex items-center">
-                  <span className="material-symbols-outlined">storefront</span>
-                  <Text weight="light" size="sm" className="mx-1">
-                    내 상점
-                  </Text>
-                </a>
+              <Link
+                href="/my-shop"
+                prefetch={false}
+                className="flex items-center"
+              >
+                <span className="material-symbols-outlined">storefront</span>
+                <Text weight="light" size="sm" className="mx-1">
+                  내 상점
+                </Text>
               </Link>
               |
-              <Link href="/messages" prefetch={false}>
-                <a className="flex items-center">
-                  <span className="material-symbols-outlined">chat_bubble</span>
-                  <Text weight="light" size="sm" className="mx-1">
-                    채팅
-                  </Text>
-                </a>
+              <Link
+                href="/messages"
+                prefetch={false}
+                className="flex items-center"
+              >
+                <span className="material-symbols-outlined">chat_bubble</span>
+                <Text weight="light" size="sm" className="mx-1">
+                  채팅
+                </Text>
               </Link>
             </div>
           </div>

@@ -37,21 +37,15 @@ export default function Likes() {
         </div>
       ) : (
         <Link href={!shopId ? '#' : `/shops/${shopId}/likes`}>
-          <a>
-            <Text
-              size="xs"
-              color="grey"
-              className="flex gap-1 items-center mt-1"
+          <Text size="xs" color="grey" className="flex gap-1 items-center mt-1">
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: '0.725rem' }}
             >
-              <span
-                className="material-symbols-outlined"
-                style={{ fontSize: '0.725rem' }}
-              >
-                favorite
-              </span>
-              {likeCount}
-            </Text>
-          </a>
+              favorite
+            </span>
+            {likeCount}
+          </Text>
         </Link>
       )}
     </div>

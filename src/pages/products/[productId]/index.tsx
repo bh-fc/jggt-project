@@ -339,14 +339,12 @@ export default function ProductDetail({
                       .slice(0, 3)
                       .map(({ id, title, price, createdAt, imageUrls }) => (
                         <Link key={id} href={`/products/${id}`}>
-                          <a className="w-44">
-                            <Product
-                              title={title}
-                              price={price}
-                              createdAt={createdAt}
-                              imageUrl={imageUrls[0]}
-                            />
-                          </a>
+                          <Product
+                            title={title}
+                            price={price}
+                            createdAt={createdAt}
+                            imageUrl={imageUrls[0]}
+                          />
                         </Link>
                       ))}
                   </div>
@@ -389,32 +387,28 @@ export default function ProductDetail({
               </Button>
               <div className="grid grid-cols-2 gap-2 mt-5">
                 {shopProducts.slice(0, 2).map(({ id, imageUrls, price }) => (
-                  <Link key={id} href={`/products/${id}`}>
-                    <a className="relative aspect-square">
-                      <img
-                        src={imageUrls[0]}
-                        alt=""
-                        className="w-full h-full"
-                      />
-                      <div className="absolute bottom-0 w-full bg-black opacity-50 text-center py-1">
-                        <Text color="white" size="sm">
-                          {price.toLocaleString()}원
-                        </Text>
-                      </div>
-                    </a>
+                  <Link
+                    key={id}
+                    href={`/products/${id}`}
+                    className="relative aspect-square"
+                  >
+                    <img src={imageUrls[0]} alt="" className="w-full h-full" />
+                    <div className="absolute bottom-0 w-full bg-black opacity-50 text-center py-1">
+                      <Text color="white" size="sm">
+                        {price.toLocaleString()}원
+                      </Text>
+                    </div>
                   </Link>
                 ))}
               </div>
               {shopProducts.length > 2 && (
-                <Link href="/">
-                  <a className="block border-b text-center py-3">
-                    <Text size="sm" color="red">
-                      {shopProducts.length - 2}개
-                    </Text>{' '}
-                    <Text size="sm" color="grey">
-                      상품 더 보기 {'>'}
-                    </Text>
-                  </a>
+                <Link href="/" className="block border-b text-center py-3">
+                  <Text size="sm" color="red">
+                    {shopProducts.length - 2}개
+                  </Text>{' '}
+                  <Text size="sm" color="grey">
+                    상품 더 보기 {'>'}
+                  </Text>
                 </Link>
               )}
               <div>
@@ -435,12 +429,13 @@ export default function ProductDetail({
                     ))}
                 </div>
                 <div>
-                  <Link href={`/shops/${shop.id}/reviews`}>
-                    <a className="block border-y text-center py-2">
-                      <Text color="grey" size="sm">
-                        상점후기 더 보기 {'>'}
-                      </Text>
-                    </a>
+                  <Link
+                    href={`/shops/${shop.id}/reviews`}
+                    className="block border-y text-center py-2"
+                  >
+                    <Text color="grey" size="sm">
+                      상점후기 더 보기 {'>'}
+                    </Text>
                   </Link>
                 </div>
                 <div className="flex gap-1 my-7">

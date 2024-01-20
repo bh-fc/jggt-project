@@ -45,15 +45,13 @@ export default function ProductList({
             {products.map(
               ({ id, title, price, createdAt, imageUrls, purchaseBy }) => (
                 <Link href={`/products/${id}`} key={id}>
-                  <a>
-                    <Product
-                      title={title}
-                      price={price}
-                      createdAt={createdAt}
-                      imageUrl={imageUrls[0]}
-                      isSoldOut={!!purchaseBy}
-                    />
-                  </a>
+                  <Product
+                    title={title}
+                    price={price}
+                    createdAt={createdAt}
+                    imageUrl={imageUrls[0]}
+                    isSoldOut={!!purchaseBy}
+                  />
                 </Link>
               ),
             )}

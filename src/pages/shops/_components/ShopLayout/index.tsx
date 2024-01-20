@@ -145,10 +145,11 @@ export default function ShopLayout({
                       accept=".jpg, .jpeg, .png"
                     />
                   </form>
-                  <Link href="/products">
-                    <a className="border border-white text-white px-3 py-2 my-2">
-                      내 상점 관리
-                    </a>
+                  <Link
+                    href="/products"
+                    className="border border-white text-white px-3 py-2 my-2"
+                  >
+                    내 상점 관리
                   </Link>
                 </>
               )}
@@ -256,73 +257,68 @@ export default function ShopLayout({
           </div>
         </div>
         <div className="flex w-full h-12 mt-6">
-          <Link href={`/shops/${shop.id}/products`}>
-            <a
-              className={classNames(
-                'flex-1 border flex justify-center items-center',
-                currentTab === 'products'
-                  ? 'border-black border-b-0'
-                  : 'bg-gray-100 text-gray-600 border-gray',
-              )}
-              data-cy="shops-products-tab"
-            >
-              상품 <Text className="ml-2">{productCount.toLocaleString()}</Text>
-            </a>
+          <Link
+            href={`/shops/${shop.id}/products`}
+            className={classNames(
+              'flex-1 border flex justify-center items-center',
+              currentTab === 'products'
+                ? 'border-black border-b-0'
+                : 'bg-gray-100 text-gray-600 border-gray',
+            )}
+            data-cy="shops-products-tab"
+          >
+            상품 <Text className="ml-2">{productCount.toLocaleString()}</Text>
           </Link>
-          <Link href={`/shops/${shop.id}/reviews`}>
-            <a
-              className={classNames(
-                'flex-1 border flex justify-center items-center',
-                currentTab === 'reviews'
-                  ? 'border-black border-b-0'
-                  : 'bg-gray-100 text-gray-600 border-gray',
-              )}
-              data-cy="shops-reviews-tab"
-            >
-              상점후기
-              <Text className="ml-2">{reviewCount.toLocaleString()}</Text>
-            </a>
+          <Link
+            href={`/shops/${shop.id}/reviews`}
+            className={classNames(
+              'flex-1 border flex justify-center items-center',
+              currentTab === 'reviews'
+                ? 'border-black border-b-0'
+                : 'bg-gray-100 text-gray-600 border-gray',
+            )}
+            data-cy="shops-reviews-tab"
+          >
+            상점후기
+            <Text className="ml-2">{reviewCount.toLocaleString()}</Text>
           </Link>
-          <Link href={`/shops/${shop.id}/likes`}>
-            <a
-              className={classNames(
-                'flex-1 border flex justify-center items-center',
-                currentTab === 'likes'
-                  ? 'border-black border-b-0'
-                  : 'bg-gray-100 text-gray-600 border-gray',
-              )}
-              data-cy="shops-likes-tab"
-            >
-              찜 <Text className="ml-2">{likeCount.toLocaleString()}</Text>
-            </a>
+          <Link
+            href={`/shops/${shop.id}/likes`}
+            className={classNames(
+              'flex-1 border flex justify-center items-center',
+              currentTab === 'likes'
+                ? 'border-black border-b-0'
+                : 'bg-gray-100 text-gray-600 border-gray',
+            )}
+            data-cy="shops-likes-tab"
+          >
+            찜 <Text className="ml-2">{likeCount.toLocaleString()}</Text>
           </Link>
-          <Link href={`/shops/${shop.id}/following`}>
-            <a
-              className={classNames(
-                'flex-1 border flex justify-center items-center',
-                currentTab === 'following'
-                  ? 'border-black border-b-0'
-                  : 'bg-gray-100 text-gray-600 border-gray',
-              )}
-              data-cy="shops-following-tab"
-            >
-              팔로잉
-              <Text className="ml-2">{followingCount.toLocaleString()}</Text>
-            </a>
+          <Link
+            href={`/shops/${shop.id}/following`}
+            className={classNames(
+              'flex-1 border flex justify-center items-center',
+              currentTab === 'following'
+                ? 'border-black border-b-0'
+                : 'bg-gray-100 text-gray-600 border-gray',
+            )}
+            data-cy="shops-following-tab"
+          >
+            팔로잉
+            <Text className="ml-2">{followingCount.toLocaleString()}</Text>
           </Link>
-          <Link href={`/shops/${shop.id}/follower`}>
-            <a
-              className={classNames(
-                'flex-1 border flex justify-center items-center',
-                currentTab === 'follower'
-                  ? 'border-black border-b-0'
-                  : 'bg-gray-100 text-gray-600 border-gray',
-              )}
-              data-cy="shops-follower-tab"
-            >
-              팔로워
-              <Text className="ml-2">{followerCount.toLocaleString()}</Text>
-            </a>
+          <Link
+            href={`/shops/${shop.id}/follower`}
+            className={classNames(
+              'flex-1 border flex justify-center items-center',
+              currentTab === 'follower'
+                ? 'border-black border-b-0'
+                : 'bg-gray-100 text-gray-600 border-gray',
+            )}
+            data-cy="shops-follower-tab"
+          >
+            팔로워
+            <Text className="ml-2">{followerCount.toLocaleString()}</Text>
           </Link>
         </div>
         <div>{children}</div>

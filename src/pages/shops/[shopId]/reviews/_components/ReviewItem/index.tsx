@@ -72,15 +72,16 @@ export default function ReviewItem({
           <Text color="grey"> {dayjs(createdAt).fromNow()} </Text>
         </div>
         <div>
-          <Link href={`/products/${product.id}`}>
-            <a className="border border-grey-300 px-2 py-1 my-3 inline-flex gap-2 items-center">
-              <Text size="sm" color="grey">
-                {product.title}
-              </Text>
-              <Text size="sm" color="grey" weight="bold">
-                {'>'}
-              </Text>
-            </a>
+          <Link
+            href={`/products/${product.id}`}
+            className="border border-grey-300 px-2 py-1 my-3 inline-flex gap-2 items-center"
+          >
+            <Text size="sm" color="grey">
+              {product.title}
+            </Text>
+            <Text size="sm" color="grey" weight="bold">
+              {'>'}
+            </Text>
           </Link>
           <div>
             <MarkdownViewer value={contents} />

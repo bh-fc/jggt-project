@@ -44,24 +44,19 @@ export default function AutoComplete({ query, handleClose }: Props) {
         <Link
           href={`/search/shop?query=${encodeURIComponent(query)}`}
           prefetch={false}
+          className="border-b border-grey-300 pb-1 mb-2 flex items-center"
+          onClick={() => handleClose()}
         >
-          <a
-            className="border-b border-grey-300 pb-1 mb-2 flex items-center"
-            onClick={() => handleClose()}
-          >
-            <span className="material-symbols-outlined shrink-0">
-              storefront
-            </span>
-            <Text size="sm" className="ml-1 shrink-0">
-              상점 검색 {'>'}
-            </Text>
-            <Text size="sm" color="red" className="mx-1 truncate">
-              {query}
-            </Text>
-            <Text size="sm" color="grey" className="shrink-0">
-              상점명으로 검색
-            </Text>
-          </a>
+          <span className="material-symbols-outlined shrink-0">storefront</span>
+          <Text size="sm" className="ml-1 shrink-0">
+            상점 검색 {'>'}
+          </Text>
+          <Text size="sm" color="red" className="mx-1 truncate">
+            {query}
+          </Text>
+          <Text size="sm" color="grey" className="shrink-0">
+            상점명으로 검색
+          </Text>
         </Link>
         {keywords.length === 0 ? (
           <div className="h-full flex justify-center items-center">
@@ -76,20 +71,14 @@ export default function AutoComplete({ query, handleClose }: Props) {
                 key={keyword}
                 href={`/search?query=${encodeURIComponent(keyword)}`}
                 prefetch={false}
+                onClick={() => {
+                  addRecentKeyword(keyword)
+                  handleClose()
+                }}
               >
-                <a
-                  onClick={() => {
-                    addRecentKeyword(keyword)
-                    handleClose()
-                  }}
-                >
-                  <Text
-                    size="sm"
-                    className="block my-1 truncate cursor-pointer"
-                  >
-                    {keyword}
-                  </Text>
-                </a>
+                <Text size="sm" className="block my-1 truncate cursor-pointer">
+                  {keyword}
+                </Text>
               </Link>
             ))}
           </div>

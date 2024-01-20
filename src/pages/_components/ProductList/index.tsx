@@ -57,14 +57,12 @@ export default function ProductList({ initialProducts = [] }: Props) {
       <div className="grid grid-cols-5 gap-4">
         {products?.map(({ id, title, price, imageUrls, createdAt }) => (
           <Link key={id} href={`/products/${id}`}>
-            <a>
-              <Product
-                title={title}
-                price={price}
-                imageUrl={imageUrls[0]}
-                createdAt={createdAt}
-              />
-            </a>
+            <Product
+              title={title}
+              price={price}
+              imageUrl={imageUrls[0]}
+              createdAt={createdAt}
+            />
           </Link>
         ))}
       </div>

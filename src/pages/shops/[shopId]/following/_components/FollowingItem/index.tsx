@@ -71,10 +71,8 @@ export default function FollowingItem({ shopId }: Props) {
         />
       </div>
       {products.slice(0, 3).map(({ imageUrls, id, title }) => (
-        <Link href={`/products/${id}`} key={id}>
-          <a className="w-40 h-40">
-            <img src={imageUrls[0]} alt={title} className="w-full h-full" />
-          </a>
+        <Link href={`/products/${id}`} key={id} className="w-40 h-40">
+          <img src={imageUrls[0]} alt={title} className="w-full h-full" />
         </Link>
       ))}
     </div>

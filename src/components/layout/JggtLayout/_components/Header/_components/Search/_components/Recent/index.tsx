@@ -53,17 +53,14 @@ export default function Recent({ handleClose }: Props) {
                 href={`/search?query=${encodeURIComponent(recent)}`}
                 key={recent}
                 prefetch={false}
+                onClick={() => {
+                  addRecentKeyword(recent)
+                  handleClose()
+                }}
               >
-                <a
-                  onClick={() => {
-                    addRecentKeyword(recent)
-                    handleClose()
-                  }}
-                >
-                  <Text size="sm" key={recent} className="block my-1 truncate">
-                    {recent}
-                  </Text>
-                </a>
+                <Text size="sm" key={recent} className="block my-1 truncate">
+                  {recent}
+                </Text>
               </Link>
             ))}
           </div>
