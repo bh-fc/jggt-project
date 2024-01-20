@@ -1,11 +1,11 @@
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
+
+import BuyProductItem from '../BuyProductItem'
 
 import Pagination from '@/components/common/Pagination'
 import Text from '@/components/common/Text'
 import { getShopSells } from '@/repository/shops/getShopSells'
 import { Product } from '@/types'
-import Button from '@/components/common/Button'
 
 type Props = {
   initialProducts: Product[]
@@ -41,35 +41,13 @@ export default function BuyProductList({
       ) : (
         <>
           {products.map(({ id, imageUrls, title, price }) => (
-            <div key={id} className="flex text-center border-y-2 my-4 py-2">
-              <div className="w-28 h-28">
-                <img src={imageUrls[0]} alt={title} className="w-full h-full" />
-              </div>
-              <div className="flex-1 flex justify-center items-center">
-                <Link href={`/products/${id}`}>
-                  <a>
-                    <Text>{title}</Text>
-                  </a>
-                </Link>
-              </div>
-              <div className="w-28 flex justify-center items-center">
-                <Text>{price.toLocaleString()}</Text>
-              </div>
-              <div className="w-32 flex justify-center items-center">
-                <Button
-                  color="red"
-                  className="flex justify-center items-center gap-1"
-                >
-                  <span
-                    style={{ fontSize: '1rem' }}
-                    className="material-symbols-outlined"
-                  >
-                    rate_review
-                  </span>
-                  후기작성
-                </Button>
-              </div>
-            </div>
+            <BuyProductItem
+              key={id}
+              id={id}
+              title={title}
+              price={price}
+              imageUrl={imageUrls[0]}
+            />
           ))}
           <div className="flex justify-end">
             <Pagination
