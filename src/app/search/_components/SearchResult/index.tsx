@@ -1,6 +1,8 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+'use client'
+
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
 
 import Pagination from '@/components/common/Pagination'
 import Product from '@/components/common/Product'
@@ -8,41 +10,20 @@ import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
 import { getProductsByKeyword } from '@/repository/products/getProductsByKeyword'
-import { getProductsByKeywordCount } from '@/repository/products/getProductsByKeywordCount'
 import { Product as TProduct } from '@/types'
 import supabase from '@/utils/supabase/browserSupabase'
-import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
-export const getServerSideProps: GetServerSideProps<{
+type Props = {
   products: TProduct[]
-  query: string
   count: number
-}> = async (context) => {
-  const supabase = getServerSupabase(context)
-  const originalQuery = context.query.query as string | undefined
-  if (!originalQuery) {
-    throw new Error('검색어가 없습니다')
-  }
-
-  const query = decodeURIComponent(originalQuery)
-
-  const [{ data: products }, { data: count }] = await Promise.all([
-    getProductsByKeyword(supabase, {
-      query,
-      fromPage: 0,
-      toPage: 1,
-    }),
-    getProductsByKeywordCount(supabase, query),
-  ])
-
-  return { props: { products, query, count } }
 }
 
-export default function Search({
+export default function SearchResult({
   products: initialProducts,
-  query,
   count,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: Props) {
+  const searchParams = useSearchParams()
+  const query = searchParams?.get('query')!
   const [products, setProducts] = useState<TProduct[]>(initialProducts)
   // 사용자에게 보이는 페이지는 1부터 시작
   const [currentPage, setCurrentPage] = useState(1)

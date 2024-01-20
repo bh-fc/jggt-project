@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 
 import { supabaseKey, supabaseUrl } from '../constants'
 
-function getServerComponentSuapbase(cookieStore: ReturnType<typeof cookies>) {
+function getServerComponentSupabase(cookieStore: ReturnType<typeof cookies>) {
   const supabase = createServerClient(supabaseUrl, supabaseKey, {
     cookies: {
       get(name: string) {
@@ -15,4 +15,4 @@ function getServerComponentSuapbase(cookieStore: ReturnType<typeof cookies>) {
   return supabase
 }
 
-export default getServerComponentSuapbase
+export default getServerComponentSupabase

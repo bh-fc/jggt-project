@@ -43,9 +43,7 @@ describe('메인페이지', () => {
     cy.contains('가위 - 0').click()
     cy.url().should(
       'eq',
-      `http://localhost:3000/search?query=${encodeURIComponent(
-        '가위 - 0',
-      ).replace(/%20/g, '+')}`,
+      `http://localhost:3000/search?query=${encodeURIComponent('가위 - 0')}`,
     )
   })
   it('상품 검색 이후 최근 검색어에 해당 검색어가 포함되어야 한다', () => {
@@ -64,9 +62,7 @@ describe('메인페이지', () => {
     cy.contains('상점 검색 >').click()
     cy.url().should(
       'eq',
-      `http://localhost:3000/search/shop?query=${encodeURIComponent(
-        '가위',
-      ).replace(/%20/g, '+')}`,
+      `http://localhost:3000/search/shop?query=${encodeURIComponent('가위')}`,
     )
   })
 })

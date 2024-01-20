@@ -1,48 +1,28 @@
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
-import { useEffect, useState } from 'react'
+'use client'
+import { useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
 
-import SearchShopItem from './_components/SearchShopItem'
+import SearchShopItem from '../SearchShopItem'
 
 import Pagination from '@/components/common/Pagination'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
 import { getShopsByKeyword } from '@/repository/shops/getShopsByKeyword'
-import { getShopsByKeywordCount } from '@/repository/shops/getShopsByKeywordCount'
 import { Shop } from '@/types'
 import supabase from '@/utils/supabase/browserSupabase'
-import getServerSupabase from '@/utils/supabase/getServerSupabase'
 
-export const getServerSideProps: GetServerSideProps<{
+type Props = {
   shops: Shop[]
-  query: string
   count: number
-}> = async (context) => {
-  const supabase = getServerSupabase(context)
-  const originalQuery = context.query.query as string | undefined
-  if (!originalQuery) {
-    throw new Error('검색어가 없습니다')
-  }
-
-  const query = decodeURIComponent(originalQuery)
-
-  const [{ data: shops }, { data: count }] = await Promise.all([
-    getShopsByKeyword(supabase, {
-      query,
-      fromPage: 0,
-      toPage: 1,
-    }),
-    getShopsByKeywordCount(supabase, query),
-  ])
-
-  return { props: { shops, query, count } }
 }
 
-export default function SearchShop({
+export default function SearchShopResult({
   shops: initialShops,
-  query,
   count,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: Props) {
+  const searchParams = useSearchParams()
+  const query = searchParams?.get('query')!
   const [shops, setShops] = useState<Shop[]>(initialShops)
 
   // 사용자에게 보이는 페이지는 1부터 시작
