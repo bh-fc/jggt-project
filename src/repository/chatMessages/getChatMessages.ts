@@ -15,7 +15,11 @@ export async function getChatMessages({
   data: ChatMessage[]
 }> {
   const data: ChatMessage[] = Array.from({ length: toIndex - fromIndex }).map(
-    () => getMockChatMessageData({ chatRoom: chatRoomId }),
+    (_, idx) =>
+      getMockChatMessageData({
+        chatRoom: chatRoomId,
+        message: `fromIndex: ${fromIndex}, toIndex: ${toIndex}, curIndex: ${idx}`,
+      }),
   )
   return Promise.resolve({ data })
 }
