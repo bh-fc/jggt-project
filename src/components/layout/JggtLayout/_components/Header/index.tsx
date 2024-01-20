@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 
 import Search from './_components/Search'
@@ -9,14 +10,19 @@ import Wrapper from '@/components/layout/Wrapper'
 type Props = { children: ReactNode }
 
 export default function Header({ children }: Props) {
+  const router = useRouter()
+
   return (
     <div className="sticky top-0 z-10 bg-white border-b">
       <Wrapper>
         <Container>
-          <div className="flex justify-between items-center py-8">
+          <div
+            className="flex justify-between items-center py-8 cursor-pointer"
+            onClick={() => router.push('/')}
+          >
             <Text
               size="4xl"
-              style={{ fontFamily: `'Black Han Sans', sans-serif;` }}
+              style={{ fontFamily: `'Black Han Sans', sans-serif` }}
             >
               🗃 중고장터
             </Text>
