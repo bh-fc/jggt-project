@@ -1,0 +1,22 @@
+name: Deploy To EC2
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        node-version: [18.x]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm install --legacy-peer-deps
+      - run: NODE_OPTIONS=--max_old_space_size=4096 npm run build
+      - run: npm run pm2:reload

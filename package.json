@@ -11,7 +11,8 @@
     "start:mock": "USE_MOCK_DATA=true next start",
     "lint": "next lint",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "pm2:reload": "pm2 reload app"
   },
   "dependencies": {
     "@faker-js/faker": "^8.3.1",
