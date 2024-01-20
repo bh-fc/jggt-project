@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 import ProductImage from './_components/ProductImage'
+import ReviewItem from './_components/ReviewItem'
 
 import Button from '@/components/common/Button'
 import Product from '@/components/common/Product'
@@ -21,8 +22,10 @@ import { getProductsByTag } from '@/repository/products/getProductsByTag'
 import { getShop } from '@/repository/shops/getShop'
 import { getShopFollowerCount } from '@/repository/shops/getShopFollowerCount'
 import { getShopProductCount } from '@/repository/shops/getShopProductCount'
-import { Product as TProdct, Shop as TShop } from '@/types'
 import { getShopProducts } from '@/repository/shops/getShopProducts'
+import { getShopReviewCount } from '@/repository/shops/getShopReviewCount'
+import { getShopReviews } from '@/repository/shops/getShopReviews'
+import { Review, Product as TProdct, Shop as TShop } from '@/types'
 
 export const getServerSideProps: GetServerSideProps<{
   product: TProdct
@@ -34,6 +37,8 @@ export const getServerSideProps: GetServerSideProps<{
   isFollowed: boolean
   suggest: TProdct[]
   shopProducts: TProdct[]
+  reviews: Review[]
+  reviewCount: number
 }> = async (context) => {
   const productId = context.query.productId as string
 
@@ -50,6 +55,8 @@ export const getServerSideProps: GetServerSideProps<{
     { data: followerCount },
     { data: isFollowed },
     { data: shopProducts },
+    { data: reviews },
+    { data: reviewCount },
   ] = await Promise.all([
     myShopId !== null
       ? await getIsLikedWithProductIdAndShopId({
@@ -68,6 +75,8 @@ export const getServerSideProps: GetServerSideProps<{
         })
       : { data: false },
     getShopProducts({ shopId: product.createdBy, fromPage: 0, toPage: 1 }),
+    getShopReviews({ shopId: product.createdBy, fromPage: 0, toPage: 1 }),
+    getShopReviewCount(product.createdBy),
   ])
 
   const suggest = productsByTagsResult.map(({ data }) => data).flat()
@@ -83,6 +92,8 @@ export const getServerSideProps: GetServerSideProps<{
       suggest,
       isFollowed,
       shopProducts,
+      reviews,
+      reviewCount,
     },
   }
 }
@@ -97,6 +108,8 @@ export default function ProductDetail({
   myShopId,
   suggest,
   shopProducts,
+  reviews,
+  reviewCount,
   isLiked: initialIsLiked,
   isFollowed: initialIsFollowed,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -283,6 +296,12 @@ export default function ProductDetail({
                 productCount={productCount}
                 followerCount={followerCount}
                 type="row"
+                handleClickTitle={() => alert('handleClickTitle')}
+                handleClickProfileImage={() => alert('handleClickProfileImage')}
+                handleClickProductCount={() => alert('handleClickProductCount')}
+                handleClickFollowerCount={() =>
+                  alert('handleClickFollowerCount')
+                }
               />
             </div>
             <Button color="grey" fullWidth onClick={handleToggleFollow}>
@@ -296,17 +315,84 @@ export default function ProductDetail({
                 {isFollowed ? '언팔로우' : '팔로우'}
               </Text>
             </Button>
-            <div className="grid grid-cols-2 gap-2 my-5">
+            <div className="grid grid-cols-2 gap-2 mt-5">
               {shopProducts.slice(0, 2).map(({ id, imageUrls, price }) => (
-                <div key={id} className="relative aspect-square">
-                  <img src={imageUrls[0]} alt="" className="w-full h-full" />
-                  <div className="absolute bottom-0 w-full bg-black opacity-50 text-center py-1">
-                    <Text color="white" size="sm">
-                      {price.toLocaleString()}원
-                    </Text>
-                  </div>
-                </div>
+                <Link key={id} href={`/products/${id}`}>
+                  <a className="relative aspect-square">
+                    <img src={imageUrls[0]} alt="" className="w-full h-full" />
+                    <div className="absolute bottom-0 w-full bg-black opacity-50 text-center py-1">
+                      <Text color="white" size="sm">
+                        {price.toLocaleString()}원
+                      </Text>
+                    </div>
+                  </a>
+                </Link>
               ))}
+            </div>
+            {shopProducts.length > 2 && (
+              <Link href="/">
+                <a className="block border-b text-center py-3">
+                  <Text size="sm" color="red">
+                    {shopProducts.length - 2}개
+                  </Text>{' '}
+                  <Text size="sm" color="grey">
+                    상품 더 보기 {'>'}
+                  </Text>
+                </a>
+              </Link>
+            )}
+            <div>
+              <div className="my-4 border-b pb-4">
+                <Text>상점후기</Text> <Text color="red">{reviewCount}</Text>
+              </div>
+              <div>
+                {reviews
+                  .slice(0, 3)
+                  .map(({ id, contents, createdBy, createdAt }) => (
+                    <ReviewItem
+                      key={id}
+                      contents={contents}
+                      createdBy={createdBy}
+                      createdAt={createdAt}
+                    />
+                  ))}
+              </div>
+              <div>
+                <Link href="">
+                  <a className="block border-y text-center py-2">
+                    <Text color="grey" size="sm">
+                      상점후기 더 보기 {'>'}
+                    </Text>
+                  </a>
+                </Link>
+              </div>
+              <div className="flex gap-1 my-7">
+                <Button
+                  fullWidth
+                  color="orange"
+                  className="flex justify-center items-center gap-1"
+                  onClick={() => handleChat()}
+                >
+                  <span
+                    style={{ fontSize: '1rem' }}
+                    className="material-symbols-outlined"
+                  >
+                    chat_bubble
+                  </span>
+                  <Text color="white">문의하기</Text>
+                </Button>
+                <Button
+                  fullWidth
+                  color="red"
+                  className="flex justify-center items-center gap-1"
+                  disabled={!!product.purchaseBy}
+                  onClick={() => handlePruchase()}
+                >
+                  <Text color="white">
+                    {!!product.purchaseBy ? '판매완료' : '바로구매'}
+                  </Text>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

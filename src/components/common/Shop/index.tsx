@@ -14,6 +14,14 @@ interface Props {
   followerCount: number
   /** 상점 컴포넌트 뷰 타입 */
   type?: 'row' | 'column'
+  /** 상점 타이틀 영역 클릭시 동작할 콜백 함수 */
+  handleClickTitle?: () => void
+  /** 상점 프로필 이미지 영역 클릭시 동작할 콜백 함수 */
+  handleClickProfileImage?: () => void
+  /** ProductCount 영역 클릭시 동작할 콜백 함수 */
+  handleClickProductCount?: () => void
+  /** FollowerCount 영역 클릭시 동작할 콜백 함수 */
+  handleClickFollowerCount?: () => void
 }
 
 export default function Shop({
@@ -21,7 +29,11 @@ export default function Shop({
   profileImageUrl,
   productCount,
   followerCount,
-  type,
+  handleClickTitle,
+  handleClickProfileImage,
+  handleClickProductCount,
+  handleClickFollowerCount,
+  type = 'row',
 }: Props) {
   return (
     <div
@@ -34,7 +46,13 @@ export default function Shop({
         type === 'column' && 'gap-1 items-center',
       )}
     >
-      <div className="w-14">
+      <div
+        className={classNames(
+          'w-14',
+          handleClickProfileImage && 'cursor-pointer',
+        )}
+        onClick={handleClickProfileImage}
+      >
         <ShopProfileImage imageUrl={profileImageUrl} />
       </div>
       <div
@@ -45,7 +63,12 @@ export default function Shop({
         )}
       >
         <div
-          className={classNames('truncate', type === 'column' && 'text-center')}
+          className={classNames(
+            'truncate',
+            type === 'column' && 'text-center',
+            handleClickTitle && 'cursor-pointer',
+          )}
+          onClick={handleClickTitle}
         >
           <Text>{name}</Text>
         </div>
@@ -57,8 +80,19 @@ export default function Shop({
             type === 'column' && 'justify-center',
           )}
         >
-          <div>상품 {productCount.toLocaleString()}</div> |
-          <div>팔로워 {followerCount.toLocaleString()}</div>
+          <div
+            className={classNames(handleClickProductCount && 'cursor-pointer')}
+            onClick={handleClickProductCount}
+          >
+            상품 {productCount.toLocaleString()}
+          </div>
+          |
+          <div
+            className={classNames(handleClickFollowerCount && 'cursor-pointer')}
+            onClick={handleClickFollowerCount}
+          >
+            팔로워 {followerCount.toLocaleString()}
+          </div>
         </Text>
       </div>
     </div>
