@@ -108,6 +108,10 @@ export function getMockChatMessageData(defaultValue?: Partial<ChatMessage>) {
   return data
 }
 
+export function getMockImageDataUri() {
+  return faker.image.dataUri()
+}
+
 export const timeout = (ms = 3000) =>
   new Promise((resolve) => {
     setTimeout(resolve, ms)

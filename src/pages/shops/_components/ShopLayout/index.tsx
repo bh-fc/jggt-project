@@ -11,6 +11,7 @@ import ShopProfileImage from '@/components/common/ShopProfileImage'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
+import { updateShopImageUrl } from '@/repository/shops/updateShopImageUrl'
 import { updateShopIntroduce } from '@/repository/shops/updateShopIntroduce'
 import { updateShopName } from '@/repository/shops/updateShopName'
 import { Shop } from '@/types'
@@ -47,6 +48,7 @@ export default function ShopLayout({
 }: Props) {
   const [shopName, setShopName] = useState(shop.name)
   const [shopIntroduce, setShopIntroduce] = useState(shop.introduce)
+  const [shopImageUrl, setShopImageUrl] = useState(shop.imageUrl)
 
   const [shopNameStatus, setShopNameState] = useState<EDIT_STUATUS>('IDLE')
   const [shopIntroduceStatus, setShopIntroduceState] =
@@ -86,8 +88,22 @@ export default function ShopLayout({
     }
   }
 
-  const handleSubmitShopProfileImage = async () => {
-    alert('Image!')
+  const handleSubmitShopProfileImage = async (
+    e: FormEvent<HTMLFormElement>,
+  ) => {
+    try {
+      e.preventDefault()
+
+      const formData = new FormData(e.currentTarget)
+      const imageFile = formData.get('image') as File
+
+      const {
+        data: { imageUrl },
+      } = await updateShopImageUrl(supabase, { shopId: shop.id, imageFile })
+      setShopImageUrl(imageUrl)
+    } catch (e) {
+      alert('이미지 수정에 실패했습니다.')
+    }
   }
 
   return (
@@ -97,12 +113,12 @@ export default function ShopLayout({
           <div className="border border-gray-300 flex h-64">
             <div className="bg-gray-300 h-full w-60 flex flex-col justify-center items-center gap-2">
               {!isMyShop ? (
-                <ShopProfileImage imageUrl={shop.imageUrl || undefined} />
+                <ShopProfileImage imageUrl={shopImageUrl || undefined} />
               ) : (
                 <>
                   <form onChange={handleSubmitShopProfileImage}>
                     <label htmlFor="image" className="cursor-pointer">
-                      <ShopProfileImage imageUrl={shop.imageUrl || undefined} />
+                      <ShopProfileImage imageUrl={shopImageUrl || undefined} />
                     </label>
                     <input
                       type="file"
