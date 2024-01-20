@@ -9,20 +9,31 @@ import ProductImage from './_components/ProductImage'
 
 import Button from '@/components/common/Button'
 import Product from '@/components/common/Product'
+import Shop from '@/components/common/Shop'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
+import { getIsFollowedByShopId } from '@/repository/followes/getIsFollowedByShopId'
 import { getIsLikedWithProductIdAndShopId } from '@/repository/likes/getIsLikedWithProductIdAndShopId'
 import { getMe } from '@/repository/me/getMe'
 import { getProduct } from '@/repository/products/getProduct'
 import { getProductsByTag } from '@/repository/products/getProductsByTag'
-import { Product as TProdct } from '@/types'
+import { getShop } from '@/repository/shops/getShop'
+import { getShopFollowerCount } from '@/repository/shops/getShopFollowerCount'
+import { getShopProductCount } from '@/repository/shops/getShopProductCount'
+import { Product as TProdct, Shop as TShop } from '@/types'
+import { getShopProducts } from '@/repository/shops/getShopProducts'
 
 export const getServerSideProps: GetServerSideProps<{
   product: TProdct
+  shop: TShop
+  productCount: number
+  followerCount: number
   myShopId: string | null
   isLiked: boolean
+  isFollowed: boolean
   suggest: TProdct[]
+  shopProducts: TProdct[]
 }> = async (context) => {
   const productId = context.query.productId as string
 
@@ -31,21 +42,48 @@ export const getServerSideProps: GetServerSideProps<{
     data: { shopId: myShopId },
   } = await getMe()
 
-  const { data: isLiked } =
+  const [
+    { data: isLiked },
+    productsByTagsResult,
+    { data: shop },
+    { data: productCount },
+    { data: followerCount },
+    { data: isFollowed },
+    { data: shopProducts },
+  ] = await Promise.all([
     myShopId !== null
       ? await getIsLikedWithProductIdAndShopId({
           productId,
           shopId: myShopId,
         })
-      : { data: false }
+      : { data: false },
+    Promise.all((product.tags || []).map((tag) => getProductsByTag(tag))),
+    getShop(product.createdBy),
+    getShopProductCount(product.createdBy),
+    getShopFollowerCount(product.createdBy),
+    myShopId !== null
+      ? getIsFollowedByShopId({
+          followerId: myShopId,
+          followedId: product.createdBy,
+        })
+      : { data: false },
+    getShopProducts({ shopId: product.createdBy, fromPage: 0, toPage: 1 }),
+  ])
 
-  const productsByTagsResult = await Promise.all(
-    (product.tags || []).map((tag) => getProductsByTag(tag)),
-  )
   const suggest = productsByTagsResult.map(({ data }) => data).flat()
 
   return {
-    props: { product, myShopId, isLiked, suggest },
+    props: {
+      product,
+      shop,
+      productCount,
+      followerCount,
+      myShopId,
+      isLiked,
+      suggest,
+      isFollowed,
+      shopProducts,
+    },
   }
 }
 
@@ -53,11 +91,17 @@ dayjs.extend(relativeTime).locale('ko')
 
 export default function ProductDetail({
   product,
+  shop,
+  productCount,
+  followerCount,
   myShopId,
   suggest,
+  shopProducts,
   isLiked: initialIsLiked,
+  isFollowed: initialIsFollowed,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [isLiked, setIsLiked] = useState(initialIsLiked)
+  const [isFollowed, setIsFollowed] = useState(initialIsFollowed)
 
   const checkAuth = (func: Function) => () => {
     if (!myShopId) {
@@ -67,7 +111,7 @@ export default function ProductDetail({
     func()
   }
 
-  const handleLike = checkAuth(() => {
+  const handleToggleLike = checkAuth(() => {
     setIsLiked((prev) => !prev)
     // 서버 요청 전달
   })
@@ -78,6 +122,11 @@ export default function ProductDetail({
 
   const handlePruchase = checkAuth(() => {
     alert('구매하기')
+  })
+
+  const handleToggleFollow = checkAuth(() => {
+    setIsFollowed((prev) => !prev)
+    // 서버 요청 전달
   })
 
   return (
@@ -120,7 +169,7 @@ export default function ProductDetail({
                 fullWidth
                 color="grey"
                 className="flex justify-center items-center gap-1"
-                onClick={() => handleLike()}
+                onClick={() => handleToggleLike()}
               >
                 <span
                   style={{ fontSize: '1rem' }}
@@ -159,7 +208,7 @@ export default function ProductDetail({
           </div>
         </div>
         <div className="flex border-t border-black pt-10">
-          <div className="w-4/6">
+          <div className="w-4/6 pr-2">
             <div className="border-b border-grey pb-3">
               <Text size="xl">상품 정보</Text>
             </div>
@@ -223,7 +272,43 @@ export default function ProductDetail({
               </div>
             )}
           </div>
-          <div className="w-2/6"> 상점 정보 </div>
+          <div className="w-2/6 border-l border-grey pl-2">
+            <div className="border-b border-grey pb-3">
+              <Text size="xl"> 상점 정보 </Text>
+            </div>
+            <div className="p-5">
+              <Shop
+                name={shop.name}
+                profileImageUrl={shop.imageUrl || undefined}
+                productCount={productCount}
+                followerCount={followerCount}
+                type="row"
+              />
+            </div>
+            <Button color="grey" fullWidth onClick={handleToggleFollow}>
+              <Text
+                color="black"
+                className="flex justify-center items-center gap-1"
+              >
+                <span className="material-symbols-outlined">
+                  {isFollowed ? 'person_remove' : 'person_add'}
+                </span>
+                {isFollowed ? '언팔로우' : '팔로우'}
+              </Text>
+            </Button>
+            <div className="grid grid-cols-2 gap-2 my-5">
+              {shopProducts.slice(0, 2).map(({ id, imageUrls, price }) => (
+                <div key={id} className="relative aspect-square">
+                  <img src={imageUrls[0]} alt="" className="w-full h-full" />
+                  <div className="absolute bottom-0 w-full bg-black opacity-50 text-center py-1">
+                    <Text color="white" size="sm">
+                      {price.toLocaleString()}원
+                    </Text>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </Container>
     </Wrapper>
