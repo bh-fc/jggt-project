@@ -1,32 +1,28 @@
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import 'dayjs/locale/ko'
+import { Metadata } from 'next'
 import dynamic from 'next/dynamic'
-import Head from 'next/head'
+import { cookies } from 'next/headers'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
 
+import ChatButton from './_components/ChatButton'
+import FollowButton from './_components/FollowButton'
+import LikeButton from './_components/LikeButton'
 import ProductImage from './_components/ProductImage'
+import ProductWrapper from './_components/ProductWrapper'
+import PurchaseButton from './_components/PurchaseButton'
 import ReviewItem from './_components/ReviewItem'
+import ShopInfo from './_components/ShopInfo'
 
-import Button from '@/components/common/Button'
 import Product from '@/components/common/Product'
-import Shop from '@/components/common/Shop'
 import Text from '@/components/common/Text'
 import Container from '@/components/layout/Container'
 import Wrapper from '@/components/layout/Wrapper'
 import MarkdownViewerSkeleton from '@/components/shared/MarkdownViewer/Skeleton'
-import { createChatRoom } from '@/repository/chatRooms/createChatRoom'
-import { createdFollow } from '@/repository/followes/createFollow'
-import { deleteFollow } from '@/repository/followes/deleteFollow'
 import { getIsFollowedByShopId } from '@/repository/followes/getIsFollowedByShopId'
-import { createLike } from '@/repository/likes/createLike'
-import { deleteLike } from '@/repository/likes/deleteLike'
 import { getIsLikedWithProductIdAndShopId } from '@/repository/likes/getIsLikedWithProductIdAndShopId'
 import { getMe } from '@/repository/me/getMe'
-import { buyProduct } from '@/repository/products/buyProduct'
 import { getProduct } from '@/repository/products/getProduct'
 import { getProductsByTag } from '@/repository/products/getProductsByTag'
 import { getShop } from '@/repository/shops/getShop'
@@ -35,27 +31,44 @@ import { getShopProductCount } from '@/repository/shops/getShopProductCount'
 import { getShopProducts } from '@/repository/shops/getShopProducts'
 import { getShopReviewCount } from '@/repository/shops/getShopReviewCount'
 import { getShopReviews } from '@/repository/shops/getShopReviews'
-import { Review, Product as TProdct, Shop as TShop } from '@/types'
-import { addRecentItemId } from '@/utils/localstorage'
-import supabase from '@/utils/supabase/browserSupabase'
-import getServerSupabase from '@/utils/supabase/getServerSupabase'
+import getServerComponentSupabase from '@/utils/supabase/getServerComponentSupabase'
 
-export const getServerSideProps: GetServerSideProps<{
-  product: TProdct
-  shop: TShop
-  productCount: number
-  followerCount: number
-  myShopId: string | null
-  isLiked: boolean
-  isFollowed: boolean
-  suggest: TProdct[]
-  shopProducts: TProdct[]
-  reviews: Review[]
-  reviewCount: number
-}> = async (context) => {
-  const supabase = getServerSupabase(context)
+dayjs.extend(relativeTime).locale('ko')
 
-  const productId = context.query.productId as string
+const MarkdownViewer = dynamic(
+  () => import('@/components/shared/MarkdownViewer'),
+  {
+    ssr: false,
+    loading: () => <MarkdownViewerSkeleton />,
+  },
+)
+
+type Props = {
+  params: { productId: string }
+}
+
+export async function generateMetadata({
+  params: { productId },
+}: Props): Promise<Metadata> {
+  const cookieStore = cookies()
+  const supabase = getServerComponentSupabase(cookieStore)
+
+  const { data: product } = await getProduct(supabase, productId)
+
+  const title = `중고장터 - ${product.title}`
+
+  return {
+    title,
+    openGraph: {
+      title,
+      images: product.imageUrls,
+    },
+  }
+}
+
+export default async function ProductDetail({ params: { productId } }: Props) {
+  const cookieStore = cookies()
+  const supabase = getServerComponentSupabase(cookieStore)
 
   const { data: product } = await getProduct(supabase, productId)
   const {
@@ -106,109 +119,8 @@ export const getServerSideProps: GetServerSideProps<{
 
   const suggest = productsByTagsResult.map(({ data }) => data).flat()
 
-  return {
-    props: {
-      product,
-      shop,
-      productCount,
-      followerCount,
-      myShopId,
-      isLiked,
-      suggest,
-      isFollowed,
-      shopProducts,
-      reviews,
-      reviewCount,
-    },
-  }
-}
-
-dayjs.extend(relativeTime).locale('ko')
-
-const MarkdownViewer = dynamic(
-  () => import('@/components/shared/MarkdownViewer'),
-  {
-    ssr: false,
-    loading: () => <MarkdownViewerSkeleton />,
-  },
-)
-
-export default function ProductDetail({
-  product,
-  shop,
-  productCount,
-  followerCount,
-  myShopId,
-  suggest,
-  shopProducts,
-  reviews,
-  reviewCount,
-  isLiked: initialIsLiked,
-  isFollowed: initialIsFollowed,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const router = useRouter()
-  const [isLiked, setIsLiked] = useState(initialIsLiked)
-  const [isFollowed, setIsFollowed] = useState(initialIsFollowed)
-
-  const checkAuth = (func: Function) => () => {
-    if (!myShopId) {
-      alert('로그인이 필요합니다.')
-      return
-    }
-    func()
-  }
-
-  const handleToggleLike = checkAuth(async () => {
-    try {
-      setIsLiked(!isLiked)
-      if (!isLiked) {
-        await createLike(supabase, product.id)
-      } else {
-        await deleteLike(supabase, product.id)
-      }
-    } catch (e) {
-      setIsLiked(isLiked)
-    }
-  })
-
-  const handleChat = checkAuth(async () => {
-    const { data: chatRoom } = await createChatRoom(supabase, shop.id)
-    router.push(`/messages/${chatRoom.id}`)
-  })
-
-  const handlePruchase = checkAuth(async () => {
-    await buyProduct(supabase, product.id)
-    location.reload()
-  })
-
-  const handleToggleFollow = checkAuth(async () => {
-    try {
-      setIsFollowed(!isFollowed)
-      if (!isFollowed) {
-        await createdFollow(supabase, product.createdBy)
-      } else {
-        await deleteFollow(supabase, product.createdBy)
-      }
-    } catch (e) {
-      setIsFollowed(isFollowed)
-    }
-  })
-
-  useEffect(() => {
-    addRecentItemId(product.id)
-  }, [product.id])
-
   return (
-    <>
-      <Head>
-        <title> 중고장터 - {product.title} </title>
-        <meta
-          property="og:title"
-          content={`중고장터 - ${product.title}`}
-          key="title"
-        />
-        <meta property="og:image" content={product.imageUrls[0]} />
-      </Head>
+    <ProductWrapper productId={product.id}>
       <Wrapper>
         <Container>
           <div className="flex gap-6 my-6">
@@ -244,45 +156,17 @@ export default function ProductDetail({
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button
-                  fullWidth
-                  color="grey"
-                  className="flex justify-center items-center gap-1"
-                  onClick={() => handleToggleLike()}
-                >
-                  <span
-                    style={{ fontSize: '1rem' }}
-                    className="material-symbols-outlined"
-                  >
-                    favorite
-                  </span>
-                  <Text color="white"> {isLiked ? '찜 취소' : '찜'} </Text>
-                </Button>
-                <Button
-                  fullWidth
-                  color="orange"
-                  className="flex justify-center items-center gap-1"
-                  onClick={() => handleChat()}
-                >
-                  <span
-                    style={{ fontSize: '1rem' }}
-                    className="material-symbols-outlined"
-                  >
-                    chat_bubble
-                  </span>
-                  <Text color="white"> 문의하기 </Text>
-                </Button>
-                <Button
-                  fullWidth
-                  disabled={!!product.purchaseBy}
-                  color="red"
-                  className="flex justify-center items-center gap-1"
-                  onClick={() => handlePruchase()}
-                >
-                  <Text color="white">
-                    {!!product.purchaseBy ? '판매완료' : '바로구매'}
-                  </Text>
-                </Button>
+                <LikeButton
+                  initialIsLiked={isLiked}
+                  isLoggedIn={!!myShopId}
+                  productId={product.id}
+                />
+                <ChatButton isLoggedIn={!!myShopId} shopId={shop.id} />
+                <PurchaseButton
+                  isLoggedIn={!!myShopId}
+                  isPurchased={!!product.purchaseBy}
+                  productId={product.id}
+                />
               </div>
             </div>
           </div>
@@ -356,35 +240,17 @@ export default function ProductDetail({
                 <Text size="xl"> 상점 정보 </Text>
               </div>
               <div className="p-5">
-                <Shop
-                  name={shop.name}
-                  profileImageUrl={shop.imageUrl || undefined}
-                  productCount={productCount}
+                <ShopInfo
+                  shop={shop}
                   followerCount={followerCount}
-                  type="row"
-                  handleClickTitle={() => router.push(`/shops/${shop.id}`)}
-                  handleClickProfileImage={() =>
-                    router.push(`/shops/${shop.id}`)
-                  }
-                  handleClickProductCount={() =>
-                    router.push(`/shops/${shop.id}/products`)
-                  }
-                  handleClickFollowerCount={() =>
-                    router.push(`/shops/${shop.id}/follower`)
-                  }
+                  productCount={productCount}
                 />
               </div>
-              <Button color="grey" fullWidth onClick={handleToggleFollow}>
-                <Text
-                  color="black"
-                  className="flex justify-center items-center gap-1"
-                >
-                  <span className="material-symbols-outlined">
-                    {isFollowed ? 'person_remove' : 'person_add'}
-                  </span>
-                  {isFollowed ? '언팔로우' : '팔로우'}
-                </Text>
-              </Button>
+              <FollowButton
+                isLoggedIn={!!myShopId}
+                initialIsFollowed={isFollowed}
+                shopId={shop.id}
+              />
               <div className="grid grid-cols-2 gap-2 mt-5">
                 {shopProducts.slice(0, 2).map(({ id, imageUrls, price }) => (
                   <Link
@@ -439,37 +305,18 @@ export default function ProductDetail({
                   </Link>
                 </div>
                 <div className="flex gap-1 my-7">
-                  <Button
-                    fullWidth
-                    color="orange"
-                    className="flex justify-center items-center gap-1"
-                    onClick={() => handleChat()}
-                  >
-                    <span
-                      style={{ fontSize: '1rem' }}
-                      className="material-symbols-outlined"
-                    >
-                      chat_bubble
-                    </span>
-                    <Text color="white">문의하기</Text>
-                  </Button>
-                  <Button
-                    fullWidth
-                    color="red"
-                    className="flex justify-center items-center gap-1"
-                    disabled={!!product.purchaseBy}
-                    onClick={() => handlePruchase()}
-                  >
-                    <Text color="white">
-                      {!!product.purchaseBy ? '판매완료' : '바로구매'}
-                    </Text>
-                  </Button>
+                  <ChatButton isLoggedIn={!!myShopId} shopId={shop.id} />
+                  <PurchaseButton
+                    isLoggedIn={!!myShopId}
+                    isPurchased={!!product.purchaseBy}
+                    productId={product.id}
+                  />
                 </div>
               </div>
             </div>
           </div>
         </Container>
       </Wrapper>
-    </>
+    </ProductWrapper>
   )
 }
