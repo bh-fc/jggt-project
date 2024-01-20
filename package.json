@@ -11,6 +11,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.3.1",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.10",
     "next": "^12.2.6",
