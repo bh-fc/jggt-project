@@ -1,20 +1,17 @@
-import { useEffect, useState } from 'react'
+import ProductList from './_components/ProductList'
 
+import Container from '@/components/layout/Container'
 import JggtLayout from '@/components/layout/JggtLayout'
-import { getProduct } from '@/repository/products/getProduct'
-import { Product } from '@/types'
+import Wrapper from '@/components/layout/Wrapper'
 
 export default function Home() {
-  const [product, setProduct] = useState<Product>()
-  useEffect(() => {
-    getProduct('id').then(({ data }) => setProduct(data))
-  }, [])
   return (
     <JggtLayout>
-      <div>
-        <h5> Sample Product </h5>
-      </div>
-      {product && <div> {JSON.stringify(product)}</div>}
+      <Wrapper>
+        <Container>
+          <ProductList />
+        </Container>
+      </Wrapper>
     </JggtLayout>
   )
 }

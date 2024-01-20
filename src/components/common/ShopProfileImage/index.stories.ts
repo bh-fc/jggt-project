@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import type { Meta, StoryObj } from '@storybook/react'
 
 import ShopProfileImage from '.'
@@ -18,6 +19,6 @@ export const DefaultShopProfileImage: Story = {
 
 export const ImagedShopProfileImage: Story = {
   args: {
-    imageUrl: 'https://picsum.photos/200',
+    imageUrl: faker.image.dataUri(),
   },
 }

@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import type { Meta, StoryObj } from '@storybook/react'
 
 import Shop from '.'
@@ -34,6 +35,6 @@ export const ImagedShop: Story = {
     productCount: 999,
     followerCount: 999,
     type: 'row',
-    profileImageUrl: 'https://picsum.photos/200',
+    profileImageUrl: faker.image.dataUri(),
   },
 }
