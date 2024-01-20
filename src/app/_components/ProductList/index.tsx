@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
