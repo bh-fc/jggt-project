@@ -65,13 +65,13 @@ export default function ChatPreview({ chatRoomId, shopId, isActive }: Props) {
             {shop.name}
           </Text>
           <div className="truncate">
-            {lastMessage && (
-              <Text size="sm" color="grey">
-                {checkIsImage(lastMessage.message)
+            <Text size="sm" color="grey">
+              {lastMessage
+                ? checkIsImage(lastMessage.message)
                   ? '[이미지]'
-                  : lastMessage.message}
-              </Text>
-            )}
+                  : lastMessage.message
+                : '🙏 메시지가 없습니다'}
+            </Text>
           </div>
         </div>
       </a>

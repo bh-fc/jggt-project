@@ -11,6 +11,7 @@ import Messages from './_components/Messages'
 import Spinner from '@/components/common/Spinner'
 import Text from '@/components/common/Text'
 import { createChatMessage } from '@/repository/chatMessages/createChatMessage'
+import { uploadImage } from '@/repository/common/uploadImage'
 import { getShop } from '@/repository/shops/getShop'
 import { Shop } from '@/types'
 import supabase from '@/utils/supabase/browserSupabase'
@@ -48,10 +49,21 @@ export default function ChatMessages({
     }
   }
 
-  const handleChangeImage: ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleChangeImage: ChangeEventHandler<HTMLInputElement> = async (e) => {
     if (e.target.files?.[0]) {
-      console.log(e.target.files[0])
-      e.target.value = ''
+      try {
+        const {
+          data: { imageUrl },
+        } = await uploadImage(supabase, e.target.files[0])
+        await createChatMessage(supabase, {
+          chatRoomId,
+          message: imageUrl,
+        })
+      } catch (e) {
+        alert('이미지 업로드에 실패했습니다.')
+      } finally {
+        e.target.value = ''
+      }
     }
   }
 
