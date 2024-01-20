@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
@@ -29,8 +30,8 @@ export default function BuyProductItem({ id, title, price, imageUrl }: Props) {
 
   return (
     <div className="flex text-center border-y-2 my-4 py-2">
-      <div className="w-28 h-28">
-        <img src={imageUrl} alt={title} className="w-full h-full" />
+      <div className="w-28 h-28 relative">
+        {imageUrl && title && <Image src={imageUrl} alt={title} fill />}
       </div>
       <div className="flex-1 flex justify-center items-center">
         <Link href={`/products/${id}`}>

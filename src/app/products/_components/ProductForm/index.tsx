@@ -207,7 +207,8 @@ export default function ProductForm({
                       close
                     </span>
                   </button>
-                  <img src={imageUrl} className="w-full h-full" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={imageUrl} alt="" className="w-full h-full" />
                   <input
                     type="text"
                     name="imageUrls"

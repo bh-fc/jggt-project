@@ -160,6 +160,7 @@ export default function Messages({ chatRoomId, myShopId }: Props) {
                 >
                   <div>
                     {checkIsImage(message) ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img src={message} alt="" />
                     ) : (
                       <Text size="sm">{message}</Text>

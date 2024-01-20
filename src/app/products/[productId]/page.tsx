@@ -4,6 +4,7 @@ import 'dayjs/locale/ko'
 import { Metadata } from 'next'
 import dynamic from 'next/dynamic'
 import { cookies } from 'next/headers'
+import Image from 'next/image'
 import Link from 'next/link'
 
 import ChatButton from './_components/ChatButton'
@@ -258,7 +259,7 @@ export default async function ProductDetail({ params: { productId } }: Props) {
                     href={`/products/${id}`}
                     className="relative aspect-square"
                   >
-                    <img src={imageUrls[0]} alt="" className="w-full h-full" />
+                    <Image src={imageUrls[0]} alt="" fill />
                     <div className="absolute bottom-0 w-full bg-black opacity-50 text-center py-1">
                       <Text color="white" size="sm">
                         {price.toLocaleString()}원

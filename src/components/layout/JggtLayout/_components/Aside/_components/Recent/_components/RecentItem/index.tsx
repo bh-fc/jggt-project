@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -21,8 +22,8 @@ export default function RecentItem({ id, title, price, imageUrl }: Props) {
     >
       <Link href={`/products/${id}`}>
         {!isHover ? (
-          <div className="w-16 h-16 border border-grey-300">
-            <img src={imageUrl} alt={title} className="w-full h-full" />
+          <div className="w-16 h-16 border border-grey-300 relative">
+            <Image src={imageUrl} alt={title} fill />
           </div>
         ) : (
           <div className="w-16 h-16 relative">
@@ -48,8 +49,8 @@ export default function RecentItem({ id, title, price, imageUrl }: Props) {
                 </Text>
                 <Text size="xs"> {price.toLocaleString()}원 </Text>
               </div>
-              <div className="w-16 h-16 shrink-0 border-t border-b border-r border-black">
-                <img src={imageUrl} alt={title} className="w-full h-full" />
+              <div className="w-16 h-16 shrink-0 border-t border-b border-r border-black relative">
+                <Image src={imageUrl} alt={title} fill />
               </div>
             </div>
           </div>
